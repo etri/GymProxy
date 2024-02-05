@@ -8,7 +8,7 @@ GymProxy makes a target simulation environment inter-operate with OpenAI Gym thr
 
 ## Installation
 
-As pre-requisite, you should have Python 3.7+ installed on your machine. 
+As pre-requisite, you should have Python 3.8 (tested under Python 3.8) installed on your machine. 
 
 [NumPy](https://numpy.org) and [OpenAI Gym](https://gym.openai.com/) libraries are also required.    
 
