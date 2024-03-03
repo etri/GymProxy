@@ -56,13 +56,14 @@ class AccessControlQueueActualEnv(BaseActualEnv):
                                            self._server_states[i_] == 'free', range(0, len(self._server_states))))
 
                 # Observation consists of customer's priority and number of free servers.
-                obs = np.array([priority, len(free_servers)], dtype=np.int)
+                obs = np.array([priority, len(free_servers)], dtype=np.int32)
 
-                done = False
+                terminated = False
+                truncated = False
                 info = {}
 
                 # Action can be 0 or 1: 0 means rejection of customer. 1 means acceptance of customer.
-                action = AccessControlQueueActualEnv.get_action(obs, self._reward, done, info)
+                action = AccessControlQueueActualEnv.get_action(obs, self._reward, terminated, truncated, info)
 
                 if len(free_servers) > 0:
                     if action:  # Means acceptance.
@@ -89,10 +90,11 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             # Arrives to the end of the episode (terminal state).
             free_servers = list(filter(lambda i_:
                                        self._server_states[i_] == 'free', range(0, len(self._server_states))))
-            obs = np.array([0, len(free_servers)], dtype=np.int)
-            done = True
+            obs = np.array([0, len(free_servers)], dtype=np.int32)
+            terminated = True
+            truncated = True
             info = {}
-            AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, done, info)
+            AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
 
         # Exception handling block.
         except TerminateGymProxy:

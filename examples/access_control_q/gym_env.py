@@ -32,7 +32,7 @@ class AccessControlQueue(BaseEnv):
         :param kwargs: Dictionary of keyword arguments.
         :return: Observation space.
         """
-        return Box(low=0, high=np.inf, shape=(2,), dtype=np.int)
+        return Box(low=0, high=np.inf, shape=(2,), dtype=np.int32)
 
     @staticmethod
     def build_action_space(**kwargs) -> gym.Space:
