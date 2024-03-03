@@ -43,6 +43,7 @@ class EnvProxy(ABC):
         self._action = None
         self._reward = None
         self._done = None
+        self._truncated = None
         self._info = None
 
     def reset_actual_env(self):
@@ -81,7 +82,7 @@ class EnvProxy(ABC):
             self._closing = True
             self._sync_gym_env()   # Resumes the actual environment and stops gym-type environment.
 
-    def get_obs_and_reward(self) -> (object, float, bool, dict):
+    def get_obs_and_reward(self) -> (object, float, bool, bool, dict):
         """Gets observation and reward from the actual environment. Called by gym-type environment.
 
         :return: Tuple of (observation, reward, done, info).
@@ -93,7 +94,7 @@ class EnvProxy(ABC):
         self._sync_gym_env()   # Resumes the actual environment, and then, waits until the actual environment stops.
 
         # Obtains a tuple of (observation, reward, done, info) after the actual environment stops.
-        return self._obs, self._reward, self._done, self._info
+        return self._obs, self._reward, self._done, self._truncated, self._info
 
     def get_obs(self) -> object:
         """Gets observation from the actual environment. Called by gym-type environment.
@@ -103,7 +104,15 @@ class EnvProxy(ABC):
         self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
         return self._obs        # Obtains observation after the actual environment stops.
 
-    def get_action(self, obs: object, reward: float, done: bool, info: dict) -> (object, bool):
+    def get_obs_and_info(self) -> (object, dict):
+        """Gets observation from the actual environment. Called by gym-type environment.
+
+        :return: observation: Agent's observation of the current environment.
+        """
+        self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
+        return self._obs, self._info         # Obtains observation after the actual environment stops.
+
+    def get_action(self, obs: object, reward: float, done: bool, truncated:bool, info: dict) -> (object, bool):
         """Gets action from the gym-type environment. Called by the actual environment.
 
         :param obs: Agent's observation of the actual environment.
@@ -114,12 +123,12 @@ class EnvProxy(ABC):
             action: An action provided by gym-type environment.
             closing: Whether the actual environment should be closed or not.
         """
-        self.set_obs_and_reward(obs, reward, done, info)
+        self.set_obs_and_reward(obs, reward, done, truncated, info)
 
         # Obtains observation after the gym-type environment stops.
         return self._action, self._closing
 
-    def set_obs_and_reward(self, obs: object, reward: float, done: bool, info: dict):
+    def set_obs_and_reward(self, obs: object, reward: float, done: bool, truncated: bool, info: dict):
         """Sets tuple of (observation, reward, done, info) from the actual environment.
 
         :param obs: Agent's observation of the actual environment.
@@ -130,6 +139,7 @@ class EnvProxy(ABC):
         self._obs = obs
         self._reward = reward
         self._done = done
+        self._truncated = truncated
         self._info = info
 
         # Resumes the gym-type environment, and then, waits until the gym-type environment stops.

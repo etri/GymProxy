@@ -4,11 +4,11 @@
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.3: Gambler's Problem).
 """
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from examples.gamblers_problem.actual_env import GamblersProblemActualEnv
-from gym.spaces import Box, Discrete
+from gymnasium.spaces import Box, Discrete
 from gymproxy import BaseEnv
 
 
@@ -32,7 +32,7 @@ class GamblersProblem(BaseEnv):
         """
         config = kwargs['config']
         s_win = config['winning_capital']
-        return Box(low=0, high=s_win, shape=(1,), dtype=np.int)
+        return Box(low=0, high=s_win, shape=(1,), dtype=np.int_)
 
     @staticmethod
     def build_action_space(**kwargs) -> gym.Space:
@@ -43,4 +43,4 @@ class GamblersProblem(BaseEnv):
         """
         config = kwargs['config']
         s_win = config['winning_capital']
-        return Box(low=1., high=s_win, shape=(1,), dtype=np.int)
+        return Box(low=1., high=s_win, shape=(1,), dtype=np.int_)

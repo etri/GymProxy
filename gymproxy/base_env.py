@@ -3,16 +3,21 @@
 """Module including BaseEnv class.
 """
 
-import gym
+import gymnasium as gym
 from abc import *
 from gymproxy.env_proxy import EnvProxy
 from gymproxy.base_actual_env import BaseActualEnv
 
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+
+ObsType = TypeVar("ObsType")
+ActType = TypeVar("ActType")
+RenderFrame = TypeVar("RenderFrame")
 
 class BaseEnv(gym.Env, metaclass=ABCMeta):
     """Base class of gym-type environment.
     """
-    metadata = {'render.mode': ['human']}
+    metadata = {'render_modes': ['human']}
     actual_env_class = None
 
     def __init__(self, **kwargs):
@@ -22,6 +27,7 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         dictionary object indexed by 'config' keyword.
         """
         config = kwargs['config']
+        self.metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
         # Builds obs and action spaces.
         obs_space = self.build_obs_space(config=config)
@@ -35,16 +41,17 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         self.observation_space = obs_space
         self.action_space = action_space
 
-    def reset(self) -> object:
+    def reset(self, seed:int | None= None, options: dict[str, Any] | None = None) -> (object, dict):
         """Resets the environment to an initial state and returns an initial observation. See gym.core.Env.reset() for
         detailed description.
 
         :return: observation: Agent's observation of the current environment.
         """
+        self._seed = None
         self._env_proxy.reset_actual_env()  # Resets the actual environment.
-        return self._env_proxy.get_obs()    # Gets observation object from the environment proxy.
+        return self._env_proxy.get_obs_and_info()    # Gets observation object from the environment proxy.
 
-    def step(self, action: object) -> (object, float, bool, dict):
+    def step(self, action: object) -> (object, float, bool, bool, dict):
         """Run one time-step of the environment's dynamics. See gym.core.Env.step() for detailed description.
 
         :param action: An action provided by the agent.

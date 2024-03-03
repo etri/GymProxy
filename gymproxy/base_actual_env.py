@@ -44,7 +44,7 @@ class BaseActualEnv(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def get_action(obs: object, reward: float, done: bool, info: dict) -> any:
+    def get_action(obs: object, reward: float, done: bool, truncated:bool, info: dict) -> any:
         """Gets action from the environment proxy. This method should be called in the scope of the actual environment.
 
         :param obs: Observation to be given to the agent.
@@ -53,13 +53,13 @@ class BaseActualEnv(ABC):
         :param info: Information that is additionally to be given to the agent.
         :return: action: Action from the agent.
         """
-        action, closing = BaseActualEnv.env_proxy.get_action(obs, reward, done, info)
+        action, closing = BaseActualEnv.env_proxy.get_action(obs, reward, done, truncated, info)
         if closing:
             raise TerminateGymProxy()
         return action
 
     @staticmethod
-    def set_obs_and_reward(obs: object, reward: float, done: bool, info: dict):
+    def set_obs_and_reward(obs: object, reward: float, done: bool, truncated:bool, info: dict):
         """Sends observation, reward, done, and information to the agent, but do not receive action. This method should
         be called in the scope of environment when the begin or end of an episode.
 
@@ -68,4 +68,4 @@ class BaseActualEnv(ABC):
         :param done: Indicates whether the actual environment is finished or not.
         :param info: Information that is additionally to be given to the agent.
         """
-        BaseActualEnv.env_proxy.set_obs_and_reward(obs, reward, done, info)
+        BaseActualEnv.env_proxy.set_obs_and_reward(obs, reward, done, truncated, info)

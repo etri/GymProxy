@@ -11,4 +11,4 @@ setup(name='gymproxy',
                    'multi-threading.'),
       license='BSD',
       packages=['gymproxy'],
-      install_requires=['numpy', 'gym'])
+      install_requires=['numpy', 'gymnasium==0.29.1'])

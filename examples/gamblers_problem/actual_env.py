@@ -45,10 +45,11 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
         try:
             done = False
+            truncated = False
             info = {}
             while self._t < self._num_steps and not done:
-                obs = np.array([self._s], dtype=np.int)     # Observation is current capital.
-                action = GamblersProblemActualEnv.get_action(obs, self._reward, done, info)
+                obs = np.array([self._s], dtype=np.int32)     # Observation is current capital.
+                action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 info = {}
 
                 # Amount of betting should be less than difference between the winning and current capitals.
@@ -66,17 +67,20 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 if self._s >= self._s_win:
                     info['msg'] = 'Wins the game because the capital becomes {} dollars.'.format(self._s)
                     done = True
+                    truncated = True
                     self._reward = 1.
                 elif self._s <= 0.:
                     info['msg'] = 'Loses the game due to out of money.'
                     done = True
+                    truncated = True
 
                 self._t += 1
 
             # Arrives to the end of the episode (terminal state).
-            obs = np.array([self._s], dtype=np.float)
+            obs = np.array([self._s], dtype=np.int32)
             done = True
-            GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, info)
+            truncated = True
+            GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, truncated, info)
 
         # Exception handling block.
         except TerminateGymProxy:
