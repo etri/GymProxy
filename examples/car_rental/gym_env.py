@@ -4,11 +4,11 @@
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.2: Jack's Car Rental).
 """
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from examples.car_rental.actual_env import CarRentalActualEnv
-from gym.spaces import Box, Discrete, Tuple
+from gymnasium.spaces import Box, Discrete, Tuple
 from gymproxy import BaseEnv
 
 
@@ -32,7 +32,7 @@ class CarRental(BaseEnv):
         """
         config = kwargs['config']
         max_num_cars_per_loc = config['max_num_cars_per_loc']
-        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int)
+        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int32)
 
     @staticmethod
     def build_action_space(**kwargs) -> gym.Space:
@@ -43,4 +43,4 @@ class CarRental(BaseEnv):
         """
         config = kwargs['config']
         max_num_cars_per_loc = config['max_num_cars_per_loc']
-        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int)))
+        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int32)))

@@ -42,7 +42,7 @@ class EnvProxy(ABC):
         self._obs = None
         self._action = None
         self._reward = None
-        self._done = None
+        self._terminated = None
         self._truncated = None
         self._info = None
 
@@ -85,16 +85,16 @@ class EnvProxy(ABC):
     def get_obs_and_reward(self) -> (object, float, bool, bool, dict):
         """Gets observation and reward from the actual environment. Called by gym-type environment.
 
-        :return: Tuple of (observation, reward, done, info).
+        :return: Tuple of (observation, reward, terminated, info).
             observation: Agent's observation of the actual environment.
             reward: Amount of reward returned after previous action.
-            done: Whether the episode has ended, in which case further step() calls will return undefined results.
+            terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
             info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
         self._sync_gym_env()   # Resumes the actual environment, and then, waits until the actual environment stops.
 
-        # Obtains a tuple of (observation, reward, done, info) after the actual environment stops.
-        return self._obs, self._reward, self._done, self._truncated, self._info
+        # Obtains a tuple of (observation, reward, terminated, info) after the actual environment stops.
+        return self._obs, self._reward, self._terminated, self._truncated, self._info
 
     def get_obs(self) -> object:
         """Gets observation from the actual environment. Called by gym-type environment.
@@ -112,38 +112,38 @@ class EnvProxy(ABC):
         self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
         return self._obs, self._info         # Obtains observation after the actual environment stops.
 
-    def get_action(self, obs: object, reward: float, done: bool, truncated:bool, info: dict) -> (object, bool):
+    def get_action(self, obs: object, reward: float, terminated: bool, truncated:bool, info: dict) -> (object, bool):
         """Gets action from the gym-type environment. Called by the actual environment.
 
         :param obs: Agent's observation of the actual environment.
         :param reward: Amount of reward returned after previous action.
-        :param done: Whether the episode has ended, in which case further step() calls will return undefined results.
+        :param terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
         :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         :return: Tuple of (action, closing).
             action: An action provided by gym-type environment.
             closing: Whether the actual environment should be closed or not.
         """
-        self.set_obs_and_reward(obs, reward, done, truncated, info)
+        self.set_obs_and_reward(obs, reward, terminated, truncated, info)
 
         # Obtains observation after the gym-type environment stops.
         return self._action, self._closing
 
-    def set_obs_and_reward(self, obs: object, reward: float, done: bool, truncated: bool, info: dict):
-        """Sets tuple of (observation, reward, done, info) from the actual environment.
+    def set_obs_and_reward(self, obs: object, reward: float, terminated: bool, truncated: bool, info: dict):
+        """Sets tuple of (observation, reward, terminated, info) from the actual environment.
 
         :param obs: Agent's observation of the actual environment.
         :param reward: Amount of reward returned after previous action.
-        :param done: Whether the episode has ended, in which case further step() calls will return undefined results.
+        :param terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
         :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
         self._obs = obs
         self._reward = reward
-        self._done = done
+        self._terminated = terminated
         self._truncated = truncated
         self._info = info
 
         # Resumes the gym-type environment, and then, waits until the gym-type environment stops.
-        self._sync_actual_env(done)
+        self._sync_actual_env(terminated)
 
     def set_action(self, action: object):
         """Sets action from the gym-type environment.
@@ -162,10 +162,10 @@ class EnvProxy(ABC):
         """
         self._gym_env_event.set()
 
-    def _sync_actual_env(self, done):
+    def _sync_actual_env(self, terminated):
         """Resumes the gym-type environment and wait for its next stop. Called by the actual environment.
 
-        :param done: Whether the episode should be ended.
+        :param terminated: Whether the episode should be ended.
         """
         # Resumes the gym-type environment.
         self._actual_env_event.clear()
@@ -173,7 +173,7 @@ class EnvProxy(ABC):
         self._lock.release()
 
         # Wait during the gym-type environment is active.
-        if not done:
+        if not terminated:
             self._actual_env_event.wait()
             self._lock.acquire()
 

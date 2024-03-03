@@ -53,9 +53,10 @@ class CarRentalActualEnv(BaseActualEnv):
         """
         try:
             obs = None
-            done = False
+            terminated = False
+            truncated = False
             info = {}
-            while self._t < self._num_steps and not done:
+            while self._t < self._num_steps and not terminated:
                 msg = None
 
                 # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
@@ -70,14 +71,14 @@ class CarRentalActualEnv(BaseActualEnv):
                 # Checks if there is out of car for the two locations
                 if self._available_cars[0] < n_req_0:
                     msg = 'The business is lost because no available car at location 0'
-                    done = True
+                    terminated = True
                 if self._available_cars[1] < n_req_1:
-                    if done:
+                    if terminated:
                         msg += ' and location 1'
                     else:
                         msg = 'The business is lost because no available car at location 1'
-                        done = True
-                if done:
+                        terminated = True
+                if terminated:
                     msg += '.'
 
                 # Rents cars for requests at each location.
@@ -85,7 +86,7 @@ class CarRentalActualEnv(BaseActualEnv):
                 self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
 
                 # Observation consists of the numbers of available cars at the two locations.
-                obs = np.array(self._available_cars, dtype=np.int)
+                obs = np.array(self._available_cars, dtype=np.int32)
 
                 # A number of notes in the information dictionary.
                 info['rental_requests'] = [n_req_0, n_req_1]
@@ -95,11 +96,11 @@ class CarRentalActualEnv(BaseActualEnv):
                     del info['msg']
 
                 # Checks if the business is lost.
-                if done:
+                if terminated:
                     continue
 
                 # Action consists of source location, from which cars should be moved, and number of cars to be moved.
-                action = CarRentalActualEnv.get_action(obs, self._reward, done, info)
+                action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
                 src = action[0]
                 dst = 1 - src
                 n_moving = action[1].item()
@@ -121,8 +122,9 @@ class CarRentalActualEnv(BaseActualEnv):
                 self._t += 1
 
             # Arrives to the end of the episode (terminal state).
-            done = True
-            CarRentalActualEnv.set_obs_and_reward(obs, self._reward, done, info)
+            terminated = True
+            truncated = True
+            CarRentalActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
 
         # Exception handling block.
         except TerminateGymProxy:

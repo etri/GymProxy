@@ -40,7 +40,7 @@ def main():
     # print(obs)
     for i in range(0, NUM_EPISODES):
         j = 0
-        obs, info = env.reset()
+        obs, info = env.reset(seed=123, options={})
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent
@@ -48,15 +48,15 @@ def main():
             # Amount of betting should be less than current capital.
             action[0] = min(action[0].item(), obs[0].item())
 
-            obs, reward, done, truncated, info = env.step(action)
-            log_step(i, j, obs, reward, done, truncated, info, action)
+            obs, reward, terminated, truncated, info = env.step(action)
+            log_step(i, j, obs, reward, terminated, truncated, info, action)
             j = j + 1
-            if done:
+            if terminated:
                 break
     env.close()
 
 
-def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool, truncated:bool, info: dict, action: np.ndarray):
+def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated: bool, truncated:bool, info: dict, action: np.ndarray):
     """Utility function for printing logs.
 
     :param episode: Episode number.
@@ -72,7 +72,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool
     step_str = '{}-th step in {}-th episode / '.format(step, episode)
     obs_str = 'obs: {} / '.format(capital)
     reward_str = 'reward: {} / '.format(reward)
-    done_str = 'done: {} / '.format(done)
+    done_str = 'terminated: {} / '.format(terminated)
     truncated_str = 'truncated: {} / '.format(truncated)
     info_str = 'info: {} / '.format(info)
     action_str = 'action: {}'.format(bet)

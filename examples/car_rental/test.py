@@ -43,14 +43,14 @@ def main():
     env = gym.make(id='CarRental-v0', config=config)
     for i in range(0, NUM_EPISODES):
         j = 0
-        _ = env.reset()
+        _, _ = env.reset(seed=123, options={})
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent.
-            obs, reward, done, info = env.step(action)
-            log_step(i, j, obs, reward, done, info, action)
+            obs, reward, terminated, truncated, info = env.step(action)
+            log_step(i, j, obs, reward, terminated, info, action)
             j = j + 1
-            if done:
+            if terminated:
                 break
     env.close()
 
