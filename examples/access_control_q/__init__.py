@@ -6,7 +6,7 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 Queuing Task).
 """
 
-import gym
+import gymnasium as gym
 from examples.access_control_q.gym_env import AccessControlQueue
 
 gym.register(id='AccessControlQueue-v0', entry_point='examples.access_control_q:AccessControlQueue')

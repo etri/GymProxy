@@ -41,6 +41,7 @@ def main():
     for i in range(0, NUM_EPISODES):
         j = 0
         obs, info = env.reset(seed=123, options={})
+        logger.info(str(obs))
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent

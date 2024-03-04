@@ -43,7 +43,8 @@ def main():
     env = gym.make(id='CarRental-v0', config=config)
     for i in range(0, NUM_EPISODES):
         j = 0
-        _, _ = env.reset(seed=123, options={})
+        obs, info = env.reset(seed=123, options={})
+        logger.info(str(obs)+ str(info))
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent.

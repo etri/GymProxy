@@ -6,11 +6,11 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 Queuing Task).
 """
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from examples.access_control_q.actual_env import AccessControlQueueActualEnv
-from gym.spaces import Box, Discrete
+from gymnasium.spaces import Box, Discrete
 from gymproxy import BaseEnv
 
 

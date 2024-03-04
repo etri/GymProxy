@@ -48,7 +48,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             truncated = False
             info = {}
             while self._t < self._num_steps and not done:
-                obs = np.array([self._s], dtype=np.int32)     # Observation is current capital.
+                obs = np.array([self._s], dtype=np.int64)     # Observation is current capital.
                 action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 info = {}
 
@@ -77,7 +77,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 self._t += 1
 
             # Arrives to the end of the episode (terminal state).
-            obs = np.array([self._s], dtype=np.int32)
+            obs = np.array([self._s], dtype=np.int64)
             done = True
             truncated = True
             GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, truncated, info)
