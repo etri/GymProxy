@@ -38,7 +38,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         self._reward = 0.
         self._t = 0
 
-    def run(self, **kwargs):
+    def run(self, seed_:int, **kwargs):
         """Runs gambler's problem environment.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -55,6 +55,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 # Amount of betting should be less than difference between the winning and current capitals.
                 bet = min(action.item(), self._s_win - self._s)
 
+                random.seed(seed_) # added seed
                 # Flips the coin
                 if random.random() < self._p_h:
                     self._s += bet

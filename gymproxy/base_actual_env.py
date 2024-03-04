@@ -28,7 +28,7 @@ class BaseActualEnv(ABC):
         BaseActualEnv.env_proxy = env_proxy
 
     @abstractmethod
-    def run(self, **kwargs):
+    def run(self, seed:int, **kwargs):
         """Should define the main control loop of the actual environment here.
 
         :param kwargs: Dictionary of keyword arguments for beginning the actual environment.

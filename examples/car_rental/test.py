@@ -37,6 +37,8 @@ def main():
               'rental_credit': RENTAL_CREDIT,
               'car_moving_cost': CAR_MOVING_COST,
               'rental_rate_0': RENTAL_RATE_0,
+
+
               'rental_rate_1': RENTAL_RATE_1,
               'return_rate_0': RETURN_RATE_0,
               'return_rate_1': RETURN_RATE_1}

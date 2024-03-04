@@ -46,11 +46,11 @@ class EnvProxy(ABC):
         self._truncated = None
         self._info = None
 
-    def reset_actual_env(self):
+    def reset_actual_env(self, seed:int):
         """Resets the actual environment.
         """
 
-        def reset_actual_env_():
+        def reset_actual_env_(seed:int):
             """Nested function for adding synchronization mechanism to _reset_actual_env() function. This function is
             executed in a thread provided by _pool. This implies that the actual environment is executed in a  separate
             thread provided by _pool.
@@ -60,7 +60,7 @@ class EnvProxy(ABC):
             self._lock.acquire()
 
             self._actual_env_event.wait()   # Waits for calling get_obs() method from the gym-type environment.
-            self._reset_actual_env(self._actual_env, config=self._config)   # Actually resets the actual environment.
+            self._reset_actual_env(self._actual_env, seed, config=self._config)   # Actually resets the actual environment.
 
         # Locks the critical section for making reset_actual_env_() stopped before resetting the actual environment. It
         # will be unlocked by get_obs() method calling from the gym-type environment.
@@ -70,7 +70,7 @@ class EnvProxy(ABC):
         self._closing = False
 
         # Begins the thread for executing the actual environment.
-        self._future = self._pool.submit(reset_actual_env_)
+        self._future = self._pool.submit(reset_actual_env_, seed)
 
     def close_actual_env(self):
         """Closes the actual environment.

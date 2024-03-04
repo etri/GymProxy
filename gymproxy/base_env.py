@@ -47,8 +47,8 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
 
         :return: observation: Agent's observation of the current environment.
         """
-        self._seed = None
-        self._env_proxy.reset_actual_env()  # Resets the actual environment.
+        # self._seed = seed
+        self._env_proxy.reset_actual_env(seed)  # Resets the actual environment.
         return self._env_proxy.get_obs_and_info()    # Gets observation object from the environment proxy.
 
     def step(self, action: object) -> (object, float, bool, bool, dict):
@@ -89,13 +89,13 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         return eval('BaseEnv.actual_env_class(**kwargs)')
 
     @staticmethod
-    def reset_actual_env(actual_env: BaseActualEnv, **kwargs):
+    def reset_actual_env(actual_env: BaseActualEnv, seed:int, **kwargs):
         """Resets the actual environment.
 
         :param actual_env: Reference of the actual environment.
         :param kwargs: Dictionary of keyword arguments for resetting the actual environment.
         """
-        actual_env.run(**kwargs)
+        actual_env.run(seed, **kwargs)
 
     @staticmethod
     def close_actual_env(actual_env: BaseActualEnv, **kwargs):
