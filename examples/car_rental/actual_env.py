@@ -31,6 +31,7 @@ class CarRentalActualEnv(BaseActualEnv):
             return_rate_0 (int): Mean arrival rate of return at the location 0 for each time-steps.
             return_rate_1 (int): Mean arrival rate of return at the location 1 for each time-steps.
         """
+        print("actual_env init")
         env_proxy = kwargs['env_proxy']
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs['config']
@@ -45,8 +46,9 @@ class CarRentalActualEnv(BaseActualEnv):
         self._available_cars = [self._max_num_cars_per_loc] * 2
         self._reward = 0.
         self._t = 0
+        print("actual_env init end")
 
-    def run(self, **kwargs):
+    def run(self, seed_:int, **kwargs):
         """Runs Jack's car rental environment.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -61,6 +63,7 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
                 # distribution.
+                np.random.seed(seed=seed_)
                 n_req_0 = np.random.poisson(self._lambda_rental_0)
                 n_req_1 = np.random.poisson(self._lambda_rental_1)
 
@@ -72,12 +75,14 @@ class CarRentalActualEnv(BaseActualEnv):
                 if self._available_cars[0] < n_req_0:
                     msg = 'The business is lost because no available car at location 0'
                     terminated = True
+                    truncated = True
                 if self._available_cars[1] < n_req_1:
                     if terminated:
                         msg += ' and location 1'
                     else:
                         msg = 'The business is lost because no available car at location 1'
                         terminated = True
+                        truncated = True
                 if terminated:
                     msg += '.'
 
@@ -101,6 +106,7 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Action consists of source location, from which cars should be moved, and number of cars to be moved.
                 action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
+                print("action:", action)
                 src = action[0]
                 dst = 1 - src
                 n_moving = action[1].item()
@@ -144,4 +150,5 @@ class CarRentalActualEnv(BaseActualEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
+        print("finish")
         return

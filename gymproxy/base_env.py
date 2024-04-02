@@ -48,6 +48,7 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         :return: observation: Agent's observation of the current environment.
         """
         # self._seed = seed
+
         self._env_proxy.reset_actual_env(seed)  # Resets the actual environment.
         return self._env_proxy.get_obs_and_info()    # Gets observation object from the environment proxy.
 

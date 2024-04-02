@@ -1,3 +1,4 @@
+# Author: Sae Hyong Park <labry@etri.re.kr>
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Testing script for GamblersProblem environment implemented based on the following reference:
@@ -36,11 +37,13 @@ def main():
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     env = gym.make(id='GamblersProblem-v0', config=config)
-    # obs = env.reset(seed=123, options={})
+    #print("env", env)
+    obs = env.reset(seed=123, options={})
     # print(obs)
     for i in range(0, NUM_EPISODES):
         j = 0
         obs, info = env.reset(seed=123, options={})
+        print(obs, info)
         logger.info(str(obs))
         while True:
             env.render()

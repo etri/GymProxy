@@ -1,3 +1,4 @@
+# Author: Sae Hyong Park <labry@etri.re.kr>
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Testing script for AccessControlQueue environment implemented based on the following reference:
@@ -33,6 +34,7 @@ def main():
               'num_servers': NUM_SERVERS,
               'server_free_probability': SERVER_FREE_PROB,
               'priorities': PRIORITIES}
+
     env = gym.make(id='AccessControlQueue-v0', config=config)
     for i in range(0, NUM_EPISODES):
         j = 0

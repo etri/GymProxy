@@ -1,3 +1,4 @@
+# Author: Sae Hyong Park <labry@etri.re.kr>
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Testing script for CarRental environment implemented based on the following reference:
@@ -37,15 +38,17 @@ def main():
               'rental_credit': RENTAL_CREDIT,
               'car_moving_cost': CAR_MOVING_COST,
               'rental_rate_0': RENTAL_RATE_0,
-
-
               'rental_rate_1': RENTAL_RATE_1,
               'return_rate_0': RETURN_RATE_0,
               'return_rate_1': RETURN_RATE_1}
+
     env = gym.make(id='CarRental-v0', config=config)
+    print("env:", env)
     for i in range(0, NUM_EPISODES):
         j = 0
+        print("before obs, info")
         obs, info = env.reset(seed=123, options={})
+        print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))
         while True:
             env.render()
@@ -55,6 +58,7 @@ def main():
             j = j + 1
             if terminated:
                 break
+
     env.close()
 
 

@@ -20,8 +20,10 @@ class CarRental(BaseEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
+        print("gym_env init")
         BaseEnv.actual_env_class = CarRentalActualEnv
         super().__init__(**kwargs)
+        print("gym_env init end")
 
     @staticmethod
     def build_obs_space(**kwargs) -> gym.Space:
@@ -32,7 +34,7 @@ class CarRental(BaseEnv):
         """
         config = kwargs['config']
         max_num_cars_per_loc = config['max_num_cars_per_loc']
-        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int32)
+        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int_)
 
     @staticmethod
     def build_action_space(**kwargs) -> gym.Space:
@@ -43,4 +45,4 @@ class CarRental(BaseEnv):
         """
         config = kwargs['config']
         max_num_cars_per_loc = config['max_num_cars_per_loc']
-        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int32)))
+        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int_)))

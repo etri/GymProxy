@@ -53,7 +53,17 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 info = {}
 
                 # Amount of betting should be less than difference between the winning and current capitals.
-                bet = min(action.item(), self._s_win - self._s)
+
+                if action is None:
+                    raise Exception
+                else:
+                    bet = min(action.item(), self._s_win - self._s)
+
+
+                print("bet:", bet)
+                print("self._s:", self._s)
+                print("________")
+
 
                 random.seed(seed_) # added seed
                 # Flips the coin
@@ -101,4 +111,5 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
+        print("gambler finish")
         return

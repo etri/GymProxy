@@ -39,7 +39,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
         self._reward = 0.
         self._t = 0
 
-    def run(self, **kwargs):
+    def run(self, seed_:int, **kwargs):
         """Runs the access-control queuing task environment.
 
         :param kwargs: Dictionary of keyword arguments.
