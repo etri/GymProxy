@@ -50,16 +50,16 @@ class CarRentalSimulator:
     def start(self, seed_:int):
         """Main routine of testing CarRental gym-type environment.
         """
+        np.random.seed(seed_)
         obs = None
         terminated = False
         truncated = False
         info = {}
         while self._t < self._num_steps and not terminated:
             msg = None
-
             # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
             # distribution.
-            np.random.seed(seed=seed_)
+
             n_req_0 = np.random.poisson(self._lambda_rental_0)
             n_req_1 = np.random.poisson(self._lambda_rental_1)
 
@@ -107,6 +107,10 @@ class CarRentalSimulator:
             src = action[0].pop()
             dst = 1 - src
             n_moving = action[1].pop()
+
+            tmp_str = "dst {} src {} n_moving {}".format(dst, src, n_moving)
+            logger.info(tmp_str)
+
 
             # Some rented cars are returned. The return rates follow Poisson distribution. Note that the number of
             # available cars at each location should not be exceed _max_num_cars_per_loc.
@@ -166,7 +170,7 @@ RETURN_RATE_0 = 3
 RETURN_RATE_1 = 2
 
 NUM_EPISODES = 1
-SEED = 123
+SEED = 147
 
 def main():
     simulator = CarRentalSimulator(NUM_STEPS, MAX_NUM_CARS_PER_LOC, RENTAL_CREDIT,

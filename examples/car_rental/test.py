@@ -47,7 +47,7 @@ def main():
     for i in range(0, NUM_EPISODES):
         j = 0
         print("before obs, info")
-        obs, info = env.reset(seed=123, options={})
+        obs, info = env.reset(seed=147, options={})
         print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))
         while True:

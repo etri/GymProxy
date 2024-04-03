@@ -43,31 +43,36 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
+
         try:
             done = False
             truncated = False
             info = {}
+            print(seed_)
+            np.random.seed(seed_)  # added seed
             while self._t < self._num_steps and not done:
-                obs = np.array([self._s], dtype=np.int64)     # Observation is current capital.
+                obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
                 action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 info = {}
+                #print(obs, action)
 
                 # Amount of betting should be less than difference between the winning and current capitals.
 
                 if action is None:
-                    raise Exception
+                    BaseActualEnv.env_proxy.release_lock()
+                    BaseActualEnv.env_proxy.set_gym_env_event()
+                    exit(1)
                 else:
-                    bet = min(action.item(), self._s_win - self._s)
+                    tmp = action
+                    #print("tmp {}, self._s_win {} self._s {}".format(tmp, self._s_win, self._s))
+                    bet = min(action, self._s_win - self._s)
 
-
-                print("bet:", bet)
-                print("self._s:", self._s)
-                print("________")
-
-
-                random.seed(seed_) # added seed
                 # Flips the coin
-                if random.random() < self._p_h:
+                r = np.random.rand()
+                logger.info(self._p_h)
+                logger.info(r)
+
+                if r < self._p_h:
                     self._s += bet
                     info['flip_result'] = 'head'
                 else:
@@ -76,7 +81,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
                 # Checks if the gambler wins or not.
                 if self._s >= self._s_win:
-                    info['msg'] = 'Wins the game because the capital becomes {} dollars.'.format(self._s)
+                    info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                     done = True
                     truncated = True
                     self._reward = 1.
@@ -88,7 +93,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 self._t += 1
 
             # Arrives to the end of the episode (terminal state).
-            obs = np.array([self._s], dtype=np.int64)
+            obs = np.array([self._s], dtype=np.int_)
             done = True
             truncated = True
             GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, truncated, info)

@@ -47,11 +47,22 @@ class GamblersProblemSimulator:
         terminated = False
         np.random.seed(seed_)
         while self._t < self._num_steps:
-            obs = np.array([self._s], dtype=np.int64)     # Observation is current capital.
-            bet = max(np.random.randint(0, self._s), 1)
+            obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
+            # bet = max(np.random.randint(0, self._s), 1)
+            logger.info(obs)
+            bet = min(obs.item(), self._s_win - self._s)
+
+            init_str = 'init obs: {} '.format(self._s)
+            logger.info(init_str)
+            flip_result = None
 
             # Flips the coin
-            if np.random.rand() < self._p_h:
+
+            r = np.random.rand()
+            logger.debug(self._p_h)
+            logger.debug(r)
+
+            if r < self._p_h:
                 self._s += bet
                 flip_result = 'head'
             else:
@@ -60,7 +71,7 @@ class GamblersProblemSimulator:
 
             # Checks if the gambler wins or not.
             if self._s >= self._s_win:
-                msg = 'Wins the game because the capital becomes {} dollars.'.format(self._s)
+                msg = 'Wins the game because the capital becomes over {} dollars. action is {}'.format(self._s, bet)
                 self._reward = 1.
                 terminated = True
             elif self._s <= 0:
@@ -70,7 +81,9 @@ class GamblersProblemSimulator:
             step_str = '{}-th step / '.format(self._t)
             obs_str = 'obs: {} / '.format(self._s)
             reward_str = 'reward: {} '.format(self._reward)
-            result_str = step_str + obs_str + reward_str
+            info_str = 'info: {} / '.format(flip_result)
+            action_str = 'action: {} '.format(bet)
+            result_str = step_str + obs_str + reward_str + info_str + action_str
             logger.info(result_str)
 
             if terminated:
@@ -84,7 +97,7 @@ NUM_STEPS = 100
 PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
-SEED = 123
+SEED = 126
 
 
 def main():

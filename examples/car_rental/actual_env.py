@@ -58,14 +58,16 @@ class CarRentalActualEnv(BaseActualEnv):
             terminated = False
             truncated = False
             info = {}
+            np.random.seed(seed_)
             while self._t < self._num_steps and not terminated:
                 msg = None
 
                 # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
                 # distribution.
-                np.random.seed(seed=seed_)
                 n_req_0 = np.random.poisson(self._lambda_rental_0)
                 n_req_1 = np.random.poisson(self._lambda_rental_1)
+                print("n_req_0", n_req_0)
+                print("n_req_1", n_req_1)
 
                 # Identifies the number of possible rentals and reward.
                 n_rentals = min(self._available_cars[0], n_req_0) + min(self._available_cars[1], n_req_1)

@@ -38,19 +38,20 @@ def main():
 
     env = gym.make(id='GamblersProblem-v0', config=config)
     #print("env", env)
-    obs = env.reset(seed=123, options={})
+    obs = env.reset(seed=126, options={})
+    log_step(0, 0, obs, 0.0, False, False, {'status': 'reset'}, {})
     # print(obs)
     for i in range(0, NUM_EPISODES):
         j = 0
-        obs, info = env.reset(seed=123, options={})
-        print(obs, info)
-        logger.info(str(obs))
+        # obs, info = env.reset(seed=126, options={})
+        #print(obs, info)
+        #logger.info(str(obs))
         while True:
             env.render()
-            action = env.action_space.sample()  # Means random agent
+            # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-            action[0] = min(action[0].item(), obs[0].item())
+            action = min(obs[0].item(), WINNING_CAPITAL - INITIAL_CAPITAL)
 
             obs, reward, terminated, truncated, info = env.step(action)
             log_step(i, j, obs, reward, terminated, truncated, info, action)
@@ -60,7 +61,7 @@ def main():
     env.close()
 
 
-def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated: bool, truncated:bool, info: dict, action: np.ndarray):
+def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated: bool, truncated:bool, info: dict, action: int):
     """Utility function for printing logs.
 
     :param episode: Episode number.
@@ -72,7 +73,10 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
     :param action: An action provided by the agent.
     """
     capital = obs[0].item()
-    bet = action[0].item()
+    if action != 0 :
+        bet = action
+    else:
+        bet = 0
     step_str = '{}-th step in {}-th episode / '.format(step, episode)
     obs_str = 'obs: {} / '.format(capital)
     reward_str = 'reward: {} / '.format(reward)
