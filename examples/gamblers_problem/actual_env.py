@@ -48,7 +48,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             done = False
             truncated = False
             info = {}
-            print(seed_)
+            logger.debug(seed_)
             np.random.seed(seed_)  # added seed
             while self._t < self._num_steps and not done:
                 obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
@@ -69,8 +69,8 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
                 # Flips the coin
                 r = np.random.rand()
-                logger.info(self._p_h)
-                logger.info(r)
+                logger.debug(self._p_h)
+                logger.debug(r)
 
                 if r < self._p_h:
                     self._s += bet
@@ -116,5 +116,5 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
-        print("gambler finish")
+        logger.debug("gambler finish")
         return
