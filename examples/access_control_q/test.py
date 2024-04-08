@@ -36,18 +36,23 @@ def main():
               'priorities': PRIORITIES}
 
     env = gym.make(id='AccessControlQueue-v0', config=config)
+    accumulated_result = 0
     for i in range(0, NUM_EPISODES):
         j = 0
-        obs, info = env.reset(seed=123, options={})
+        obs, info = env.reset(seed=126, options={})
         logger.info(str(obs)+str(info))
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent.
             obs, reward, terminated, truncated, info = env.step(action)
+            accumulated_result += reward
+
             log_step(i, j, obs, reward, terminated, info, action)
             j = j + 1
             if terminated:
                 break
+
+    logger.info("Accumulated result: " + str(accumulated_result))
     env.close()
 
 

@@ -20,10 +20,8 @@ class CarRental(BaseEnv):
 
         :param kwargs: Dictionary of keyword arguments.
         """
-        print("gym_env init")
         BaseEnv.actual_env_class = CarRentalActualEnv
         super().__init__(**kwargs)
-        print("gym_env init end")
 
     @staticmethod
     def build_obs_space(**kwargs) -> gym.Space:

@@ -31,7 +31,6 @@ class CarRentalActualEnv(BaseActualEnv):
             return_rate_0 (int): Mean arrival rate of return at the location 0 for each time-steps.
             return_rate_1 (int): Mean arrival rate of return at the location 1 for each time-steps.
         """
-        print("actual_env init")
         env_proxy = kwargs['env_proxy']
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs['config']
@@ -46,7 +45,6 @@ class CarRentalActualEnv(BaseActualEnv):
         self._available_cars = [self._max_num_cars_per_loc] * 2
         self._reward = 0.
         self._t = 0
-        print("actual_env init end")
 
     def run(self, seed_:int, **kwargs):
         """Runs Jack's car rental environment.
@@ -66,8 +64,6 @@ class CarRentalActualEnv(BaseActualEnv):
                 # distribution.
                 n_req_0 = np.random.poisson(self._lambda_rental_0)
                 n_req_1 = np.random.poisson(self._lambda_rental_1)
-                print("n_req_0", n_req_0)
-                print("n_req_1", n_req_1)
 
                 # Identifies the number of possible rentals and reward.
                 n_rentals = min(self._available_cars[0], n_req_0) + min(self._available_cars[1], n_req_1)

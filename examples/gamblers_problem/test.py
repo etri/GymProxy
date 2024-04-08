@@ -38,9 +38,12 @@ def main():
 
     env = gym.make(id='GamblersProblem-v0', config=config)
     #print("env", env)
-    obs = env.reset(seed=126, options={})
-    log_step(0, 0, obs, 0.0, False, False, {'status': 'reset'}, {})
-    # print(obs)
+    obs, info = env.reset(seed=126, options={})
+    log_step(0, 0, obs, 0.0, False, False, info, {})
+    print(obs)
+
+    capital = INITIAL_CAPITAL
+
     for i in range(0, NUM_EPISODES):
         j = 0
         # obs, info = env.reset(seed=126, options={})
@@ -51,9 +54,16 @@ def main():
             # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-            action = min(obs[0].item(), WINNING_CAPITAL - INITIAL_CAPITAL)
+            action = min(obs[0].item(), WINNING_CAPITAL - capital)
+            print(action, obs[0].item(), WINNING_CAPITAL-capital)
 
             obs, reward, terminated, truncated, info = env.step(action)
+
+            if info["flip_result"] == "head":
+                capital += action
+            else:
+                capital -= action
+
             log_step(i, j, obs, reward, terminated, truncated, info, action)
             j = j + 1
             if terminated:

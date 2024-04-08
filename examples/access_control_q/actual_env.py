@@ -93,7 +93,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             obs = np.array([0, len(free_servers)], dtype=np.int32)
             terminated = True
             truncated = True
-            info = {}
+            #info = {}
             AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
 
         # Exception handling block.
