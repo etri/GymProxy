@@ -7,7 +7,7 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 
 import logging
 import numpy as np
-
+from gymnasium.spaces import Box, Discrete, Tuple
 from examples.car_rental import *
 
 # Setting logger
@@ -53,6 +53,9 @@ def main():
         while True:
             env.render()
             action = env.action_space.sample()  # Means random agent.
+            # ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))
+            # action = ready.sample()
+            # logger.info("-----* action: {}", action)
             obs, reward, terminated, truncated, info = env.step(action)
             log_step(i, j, obs, reward, terminated, info, action)
             j = j + 1

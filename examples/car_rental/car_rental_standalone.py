@@ -7,6 +7,7 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 
 import logging
 import numpy as np
+from gymnasium.spaces import Box, Discrete, Tuple
 
 from examples.car_rental import *
 
@@ -50,16 +51,20 @@ class CarRentalSimulator:
     def start(self, seed_:int):
         """Main routine of testing CarRental gym-type environment.
         """
-        np.random.seed(seed_)
+        """Runs Jack's car rental environment.
+
+        :param kwargs: Dictionary of keyword arguments.
+        """
         obs = None
         terminated = False
         truncated = False
         info = {}
+        np.random.seed(seed_)
         while self._t < self._num_steps and not terminated:
             msg = None
+
             # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
             # distribution.
-
             n_req_0 = np.random.poisson(self._lambda_rental_0)
             n_req_1 = np.random.poisson(self._lambda_rental_1)
 
@@ -82,12 +87,18 @@ class CarRentalSimulator:
             if terminated:
                 msg += '.'
 
+
+            logger.info("***** obs: {}".format(obs))
+            logger.info("..... self._available_cars0: {} self._available_cars1 {}".format(self._available_cars[0], self._available_cars[1]))
             # Rents cars for requests at each location.
             self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
             self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
 
             # Observation consists of the numbers of available cars at the two locations.
+
             obs = np.array(self._available_cars, dtype=np.int32)
+
+            logger.info("----- obs: {}".format(obs))
 
             # A number of notes in the information dictionary.
             info['rental_requests'] = [n_req_0, n_req_1]
@@ -101,16 +112,14 @@ class CarRentalSimulator:
                 continue
 
             # Action consists of source location, from which cars should be moved, and number of cars to be moved.
-            #action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
-            '''this area need attention'''
-            action = [[1], [5]]
-            src = action[0].pop()
+            # action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
+            ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))
+            action = ready.sample()
+            print("action:", action)
+            src = action[0]
             dst = 1 - src
-            n_moving = action[1].pop()
-
-            tmp_str = "dst {} src {} n_moving {}".format(dst, src, n_moving)
-            logger.info(tmp_str)
-
+            n_moving = action[1].item()
+            # n_moving = action[1]
 
             # Some rented cars are returned. The return rates follow Poisson distribution. Note that the number of
             # available cars at each location should not be exceed _max_num_cars_per_loc.
@@ -123,6 +132,9 @@ class CarRentalSimulator:
             # cars at each location should not be exceed _max_num_cars_per_loc.
             self._available_cars[src] = max(self._available_cars[src] - n_moving, 0)
             self._available_cars[dst] = min(self._available_cars[dst] + n_moving, self._max_num_cars_per_loc)
+
+            logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
+            logger.info("action {} available".format(action))
 
             info['returns'] = [n_return_0, n_return_1]  # Note returns in the information dictionary.
 
