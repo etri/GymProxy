@@ -28,13 +28,22 @@ class GamblersProblemActualEnv(BaseActualEnv):
             initial_capital (float): Initial capital.
             winning_capital (float): Capital for winning the game.
         """
+        NUM_STEPS = 100
+        PROB_HEAD = 0.5
+        INITIAL_CAPITAL = 10
+        WINNING_CAPITAL = 100
+
         env_proxy = kwargs['env_proxy']
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs['config']
-        self._num_steps = config['num_steps']
-        self._p_h = config['prob_head']
-        self._s = config['initial_capital']
-        self._s_win = config['winning_capital']
+        # self._num_steps = config['num_steps']
+        self._num_steps = NUM_STEPS
+        # self._p_h = config['prob_head']
+        self._p_h = PROB_HEAD
+        # self._s = config['initial_capital']
+        self._s = INITIAL_CAPITAL
+        # self._s_win = config['winning_capital']
+        self._s_win = WINNING_CAPITAL
         self._reward = 0.
         self._t = 0
 
