@@ -5,7 +5,7 @@
 
 from abc import *
 from gymproxy.env_proxy import EnvProxy
-
+from typing import Optional
 
 class TerminateGymProxy(Exception):
     """Utility class for terminating GymProxy as an exception.
@@ -25,10 +25,11 @@ class BaseActualEnv(ABC):
 
         :param env_proxy: Environment proxy object.
         """
+        print("BaseActualEnv __init__")
         BaseActualEnv.env_proxy = env_proxy
 
     @abstractmethod
-    def run(self, seed:int, **kwargs):
+    def run(self, seed:int, kwargs: Optional[dict] = None):
         """Should define the main control loop of the actual environment here.
 
         :param kwargs: Dictionary of keyword arguments for beginning the actual environment.
@@ -36,7 +37,7 @@ class BaseActualEnv(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def finish(self, **kwargs):
+    def finish(self, kwargs: Optional[dict] = None):
         """Should define the procedure required for finishing actual environment here.
 
         :param kwargs: Dictionary of keyword arguments for finishing the actual environment.

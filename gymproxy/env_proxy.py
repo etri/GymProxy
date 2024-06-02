@@ -6,13 +6,13 @@
 from abc import *
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event, Lock
-
+from typing import Optional
 
 class EnvProxy(ABC):
     """Environment proxy that plays a role of interface between a gym-type and external actual environment.
     """
 
-    def __init__(self, init_actual_env: callable, reset_actual_env: callable, close_actual_env: callable, **kwargs):
+    def __init__(self, init_actual_env: callable, reset_actual_env: callable, close_actual_env: callable, kwargs: Optional[dict] = None):
         """Constructor.
 
         :param init_actual_env: Function for initializing the actual environment.
@@ -29,11 +29,13 @@ class EnvProxy(ABC):
         self._actual_env_event.clear()
         self._gym_env_event.clear()
 
-        self._config = kwargs['config']
+        self._config = kwargs
         kwargs['env_proxy'] = self      # Adds self-reference to kwargs
 
         # Prepares the function objects for handling the actual environment.
-        self._actual_env = init_actual_env(**kwargs)
+        #labry debug
+        print("labry debug", kwargs)
+        self._actual_env = init_actual_env(kwargs)
         self._reset_actual_env = reset_actual_env
         self._close_actual_env = close_actual_env
 

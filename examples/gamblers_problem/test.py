@@ -36,12 +36,14 @@ def main():
 
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    env = gym.make(id='GamblersProblem-v0', config=config)
+    env = gym.make(id='GamblersProblem-v0')
+    print("1")
     #print("env", env)
     obs, info = env.reset(seed=126, options={})
+    print("w")
     log_step(0, 0, obs, 0.0, False, False, info, {})
     print(obs)
-
+    print("3")
     capital = INITIAL_CAPITAL
 
     for i in range(0, NUM_EPISODES):

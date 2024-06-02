@@ -8,7 +8,7 @@ from abc import *
 from gymproxy.env_proxy import EnvProxy
 from gymproxy.base_actual_env import BaseActualEnv
 
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Optional
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -20,23 +20,24 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
     metadata = {'render_modes': ['human']}
     actual_env_class = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments for beginning the actual environment. It should include a
         dictionary object indexed by 'config' keyword.
         """
-        config = kwargs['config']
+        print('BaseEnv __init__ kwargs: {}'.format(kwargs))
+        config = kwargs
         self.metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
         # Builds obs and action spaces.
-        obs_space = self.build_obs_space(config=config)
-        action_space = self.build_action_space(config=config)
+        obs_space = self.build_obs_space(config)
+        action_space = self.build_action_space(config)
 
         super().__init__()
 
         # Initializes the environment proxy object.
-        self._env_proxy = EnvProxy(self.init_actual_env, self.reset_actual_env, self.close_actual_env, **kwargs)
+        self._env_proxy = EnvProxy(self.init_actual_env, self.reset_actual_env, self.close_actual_env, kwargs)
 
         self.observation_space = obs_space
         self.action_space = action_space
@@ -81,35 +82,36 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         self._env_proxy.close_actual_env()
 
     @staticmethod
-    def init_actual_env(**kwargs) -> object:
+    def init_actual_env(kwargs: Optional[dict] = None) -> object:
         """Initializes the actual environment.
 
         :param kwargs: Dictionary of keyword arguments for initializing the actual environment.
         :return: Result of constructing the actual environment object.
         """
-        return eval('BaseEnv.actual_env_class(**kwargs)')
+        print(kwargs)
+        return eval('BaseEnv.actual_env_class(kwargs)')
 
     @staticmethod
-    def reset_actual_env(actual_env: BaseActualEnv, seed:int, **kwargs):
+    def reset_actual_env(actual_env: BaseActualEnv, seed:int, kwargs: Optional[dict] = None):
         """Resets the actual environment.
 
         :param actual_env: Reference of the actual environment.
         :param kwargs: Dictionary of keyword arguments for resetting the actual environment.
         """
-        actual_env.run(seed, **kwargs)
+        actual_env.run(seed, kwargs)
 
     @staticmethod
-    def close_actual_env(actual_env: BaseActualEnv, **kwargs):
+    def close_actual_env(actual_env: BaseActualEnv, kwargs: Optional[dict] = None):
         """Closes the actual environment.
 
         :param actual_env: Reference of the actual environment.
         :param kwargs: Dictionary of keyword arguments for closing the actual environment.
         """
-        actual_env.finish(**kwargs)
+        actual_env.finish(kwargs)
 
     @staticmethod
     @abstractmethod
-    def build_obs_space(**kwargs):
+    def build_obs_space(kwargs: Optional[dict] = None):
         """Builds observation space.
 
         :param kwargs: Dictionary of keyword arguments for building observation space.
@@ -118,7 +120,7 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def build_action_space(**kwargs):
+    def build_action_space(kwargs: Optional[dict] = None):
         """Builds action space.
 
         :param kwargs: Dictionary of keyword arguments for building action space.

@@ -8,6 +8,7 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 import logging
 import numpy as np
 import random
+from typing import Optional
 
 from gymproxy import BaseActualEnv, TerminateGymProxy
 
@@ -18,7 +19,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
     """External environment class that actually simulates gambler's problem.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments. It should have 'config' argument that is a dictionary for
@@ -32,10 +33,10 @@ class GamblersProblemActualEnv(BaseActualEnv):
         PROB_HEAD = 0.5
         INITIAL_CAPITAL = 10
         WINNING_CAPITAL = 100
-
-        env_proxy = kwargs['env_proxy']
+        print("GamblersProblemActualEnv __init__ called", kwargs)
+        env_proxy = kwargs.get('env_proxy')
         BaseActualEnv.__init__(self, env_proxy)
-        config = kwargs['config']
+        config = kwargs.get('config')
         # self._num_steps = config['num_steps']
         self._num_steps = NUM_STEPS
         # self._p_h = config['prob_head']
@@ -47,7 +48,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         self._reward = 0.
         self._t = 0
 
-    def run(self, seed_:int, **kwargs):
+    def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs gambler's problem environment.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -120,7 +121,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             BaseActualEnv.env_proxy.set_gym_env_event()
             exit(1)
 
-    def finish(self, **kwargs):
+    def finish(self, kwargs: Optional[dict] = None):
         """Finishes Gambler's problem environment.
 
         :param kwargs: Dictionary of keyword arguments.

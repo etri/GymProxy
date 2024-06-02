@@ -1,12 +1,24 @@
-import gymnasium as gym
-from ray import tune
+from typing import Optional
 
-tune.run("PPO",
-         config={"env": "GamblersProblem-v0",
-                 # other configurations go here, if none provided, then default configurations will be use
-                 },
-         # evaluation_interval= 2,
-         # evaluation_duration_unit= 10,
-         checkpoint_freq= 5,
-         storage_path = "C:/Users/labry/git/GymProxy/gamblers",
-         )
+NUM_STEPS = 100
+PROB_HEAD = 0.5
+INITIAL_CAPITAL = 10
+WINNING_CAPITAL = 100
+
+config = {'num_steps': NUM_STEPS,
+          'prob_head': PROB_HEAD,
+          'initial_capital': INITIAL_CAPITAL,
+          'winning_capital': WINNING_CAPITAL}
+
+def test2(**kwargs):
+    print(kwargs)
+
+def test(kwargs: Optional[dict] = None):
+    print(kwargs)
+    test2(**kwargs)
+
+def main():
+    test(config)
+
+if __name__ == "__main__":
+    main()
