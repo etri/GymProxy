@@ -23,7 +23,7 @@ PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 1
+NUM_EPISODES = 20
 
 
 def main():
@@ -37,16 +37,15 @@ def main():
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     env = gym.make(id='GamblersProblem-v0')
-    print("1")
     #print("env", env)
-    obs, info = env.reset(seed=126, options={})
-    print("w")
-    log_step(0, 0, obs, 0.0, False, False, info, {})
-    print(obs)
-    print("3")
-    capital = INITIAL_CAPITAL
+
 
     for i in range(0, NUM_EPISODES):
+        obs, info = env.reset(seed=i, options={})
+        log_step(0, 0, obs, 0.0, False, False, info, {})
+        # print(obs)
+        capital = INITIAL_CAPITAL
+        print("1")
         j = 0
         # obs, info = env.reset(seed=126, options={})
         #print(obs, info)
@@ -57,7 +56,7 @@ def main():
 
             # Amount of betting should be less than current capital.
             action = min(obs[0].item(), WINNING_CAPITAL - capital)
-            print(action, obs[0].item(), WINNING_CAPITAL-capital)
+            #print(action, obs[0].item(), WINNING_CAPITAL-capital)
 
             obs, reward, terminated, truncated, info = env.step(action)
 

@@ -1,3 +1,14 @@
+import gymnasium
+from ray.tune import register_env
+
+from examples.gamblers_problem import GamblersProblem
+
+# gymnasium.register(id='GamblersProblem-v0', entry_point='examples.gamblers_problem:GamblersProblem')
+register_env("GamblersProblem-v0", GamblersProblem)
+# env = gymnasium.make(id='InventoryEnv-v0')
+# print("env", env)
+# obs, info = env.reset(seed=126, options={})
+
 from ray import tune
 
 NUM_STEPS = 100
@@ -10,13 +21,10 @@ config = {'num_steps': NUM_STEPS,
           'initial_capital': INITIAL_CAPITAL,
           'winning_capital': WINNING_CAPITAL}
 
-from gym_env import GamblersProblem
-
-gamblers_problem = GamblersProblem(config)
-
 tune.run("PPO",
-         config={"env": gamblers_problem,    # Instead of strings e.g. "CartPole-v1", we pass the custom env class
+         config={"env": "GamblersProblem-v0",    # Instead of strings e.g. "CartPole-v1", we pass the custom env class
                  "env_config": {"config":config},
+                 "num_workers":0,
                  "evaluation_interval": 1000,
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
                  "evaluation_duration_unit": 10000,

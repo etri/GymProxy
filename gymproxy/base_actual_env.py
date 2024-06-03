@@ -25,7 +25,6 @@ class BaseActualEnv(ABC):
 
         :param env_proxy: Environment proxy object.
         """
-        print("BaseActualEnv __init__")
         BaseActualEnv.env_proxy = env_proxy
 
     @abstractmethod

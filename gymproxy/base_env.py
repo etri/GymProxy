@@ -2,19 +2,19 @@
 
 """Module including BaseEnv class.
 """
-
-import gymnasium as gym
 from abc import *
-from gymproxy.env_proxy import EnvProxy
-from gymproxy.base_actual_env import BaseActualEnv
+from typing import TypeVar, Optional
 
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar, Optional
+import gymnasium
+
+from gymproxy.base_actual_env import BaseActualEnv
+from gymproxy.env_proxy import EnvProxy
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
 
-class BaseEnv(gym.Env, metaclass=ABCMeta):
+class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
     """Base class of gym-type environment.
     """
     metadata = {'render_modes': ['human']}
@@ -26,7 +26,6 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         :param kwargs: Dictionary of keyword arguments for beginning the actual environment. It should include a
         dictionary object indexed by 'config' keyword.
         """
-        print('BaseEnv __init__ kwargs: {}'.format(kwargs))
         config = kwargs
         self.metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
@@ -42,14 +41,17 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         self.observation_space = obs_space
         self.action_space = action_space
 
-    def reset(self, seed:int | None= None, options: dict[str, Any] | None = None) -> (object, dict):
+    def reset(self,
+        *,
+        seed: Optional[int] = None,
+        options: Optional[dict] = None,
+        ) -> (object, dict):
         """Resets the environment to an initial state and returns an initial observation. See gym.core.Env.reset() for
         detailed description.
 
         :return: observation: Agent's observation of the current environment.
         """
         # self._seed = seed
-
         self._env_proxy.reset_actual_env(seed)  # Resets the actual environment.
         return self._env_proxy.get_obs_and_info()    # Gets observation object from the environment proxy.
 
@@ -88,7 +90,6 @@ class BaseEnv(gym.Env, metaclass=ABCMeta):
         :param kwargs: Dictionary of keyword arguments for initializing the actual environment.
         :return: Result of constructing the actual environment object.
         """
-        print(kwargs)
         return eval('BaseEnv.actual_env_class(kwargs)')
 
     @staticmethod

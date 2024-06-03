@@ -33,7 +33,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         PROB_HEAD = 0.5
         INITIAL_CAPITAL = 10
         WINNING_CAPITAL = 100
-        print("GamblersProblemActualEnv __init__ called", kwargs)
+
         env_proxy = kwargs.get('env_proxy')
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
@@ -55,6 +55,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
 
         try:
+
             done = False
             truncated = False
             info = {}
@@ -111,11 +112,14 @@ class GamblersProblemActualEnv(BaseActualEnv):
         # Exception handling block.
         except TerminateGymProxy:
             # Means termination signal triggered by the agent.
-            logger.info('Terminating CarRental environment.')
+            print("hello")
+            logger.info('Terminating gamblers_problem environment.')
             BaseActualEnv.env_proxy.release_lock()
             BaseActualEnv.env_proxy.set_gym_env_event()
             exit(1)
+
         except Exception as e:
+            print("hello")
             logger.exception(e)
             BaseActualEnv.env_proxy.release_lock()
             BaseActualEnv.env_proxy.set_gym_env_event()

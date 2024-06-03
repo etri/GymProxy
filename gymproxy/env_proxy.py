@@ -33,8 +33,6 @@ class EnvProxy(ABC):
         kwargs['env_proxy'] = self      # Adds self-reference to kwargs
 
         # Prepares the function objects for handling the actual environment.
-        #labry debug
-        print("labry debug", kwargs)
         self._actual_env = init_actual_env(kwargs)
         self._reset_actual_env = reset_actual_env
         self._close_actual_env = close_actual_env
@@ -59,13 +57,15 @@ class EnvProxy(ABC):
             """
             # Enters the critical section if it is unlocked. Otherwise, wait until the critical section is unlocked as
             # a result of calling get_obs() method from a gym-type environment.
+
             self._lock.acquire()
 
             self._actual_env_event.wait()   # Waits for calling get_obs() method from the gym-type environment.
-            self._reset_actual_env(self._actual_env, seed, config=self._config)   # Actually resets the actual environment.
+            self._reset_actual_env(self._actual_env, seed)   # Actually resets the actual environment.
 
         # Locks the critical section for making reset_actual_env_() stopped before resetting the actual environment. It
         # will be unlocked by get_obs() method calling from the gym-type environment.
+
         if not self._lock.locked():
             self._lock.acquire()
 
@@ -73,6 +73,7 @@ class EnvProxy(ABC):
 
         # Begins the thread for executing the actual environment.
         self._future = self._pool.submit(reset_actual_env_, seed)
+
 
     def close_actual_env(self):
         """Closes the actual environment.
