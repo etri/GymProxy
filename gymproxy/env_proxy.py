@@ -8,6 +8,15 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Event, Lock
 from typing import Optional
 
+def singleton(class_):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
+
+@singleton
 class EnvProxy(ABC):
     """Environment proxy that plays a role of interface between a gym-type and external actual environment.
     """
@@ -23,6 +32,7 @@ class EnvProxy(ABC):
         # Prepares a thread pool and synchronization variables.
         self._pool = ThreadPoolExecutor(max_workers=1)
         self._future = None
+        print("EnvProxy __init__ called self._lock = Lock()")
         self._lock = Lock()                 # For locking a critical section.
         self._actual_env_event = Event()    # Event for signaling the actual environment to enter the critical section.
         self._gym_env_event = Event()       # Event for signaling gym-type environment to enter the critical section.
@@ -49,7 +59,7 @@ class EnvProxy(ABC):
     def reset_actual_env(self, seed:int):
         """Resets the actual environment.
         """
-
+        print("reset_acutal_env")
         def reset_actual_env_(seed:int):
             """Nested function for adding synchronization mechanism to _reset_actual_env() function. This function is
             executed in a thread provided by _pool. This implies that the actual environment is executed in a  separate
@@ -78,6 +88,7 @@ class EnvProxy(ABC):
     def close_actual_env(self):
         """Closes the actual environment.
         """
+        print("close_actual_env")
         self._close_actual_env(actual_env=self._actual_env)     # Actually closes the actual environment.
 
         # Drive the thread for actual environment finished.
@@ -94,6 +105,7 @@ class EnvProxy(ABC):
             terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
             info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
+        print("get_obs_and_reward")
         self._sync_gym_env()   # Resumes the actual environment, and then, waits until the actual environment stops.
 
         # Obtains a tuple of (observation, reward, terminated, info) after the actual environment stops.
@@ -104,6 +116,7 @@ class EnvProxy(ABC):
 
         :return: observation: Agent's observation of the current environment.
         """
+        print("get_obs")
         self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
         return self._obs        # Obtains observation after the actual environment stops.
 
@@ -112,6 +125,7 @@ class EnvProxy(ABC):
 
         :return: observation: Agent's observation of the current environment.
         """
+        print("get_obs_and_info")
         self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
         return self._obs, self._info         # Obtains observation after the actual environment stops.
 
@@ -126,6 +140,7 @@ class EnvProxy(ABC):
             action: An action provided by gym-type environment.
             closing: Whether the actual environment should be closed or not.
         """
+        print("env_proxy get_action")
         self.set_obs_and_reward(obs, reward, terminated, truncated, info)
 
         # Obtains observation after the gym-type environment stops.
@@ -139,6 +154,7 @@ class EnvProxy(ABC):
         :param terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
         :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
+        print("set_obs_and_reward", obs, reward, terminated)
         self._obs = obs
         self._reward = reward
         self._terminated = terminated
@@ -153,16 +169,19 @@ class EnvProxy(ABC):
 
         :param action: An action provided by the gym-type environment.
         """
+        print("set_action")
         self._action = action
 
     def release_lock(self):
         """Releases _lock. Utility method required for closing safely the actual environment.
         """
+        print("release_lock called")
         self._lock.release()
 
     def set_gym_env_event(self):
         """Sets _gym_env_event. Utility method required for closing safely the actual environment.
         """
+        print("set_gym_env_event")
         self._gym_env_event.set()
 
     def _sync_actual_env(self, terminated):
@@ -171,12 +190,18 @@ class EnvProxy(ABC):
         :param terminated: Whether the episode should be ended.
         """
         # Resumes the gym-type environment.
+        print("_sync_actual_env called {}", terminated)
         self._actual_env_event.clear()
+        print("_sync_actual_env called 1")
         self._gym_env_event.set()
+        print("_sync_actual_env called 2")
+        print("self._lock ", self._lock)
         self._lock.release()
+        print("_sync_actual_env called 3")
 
         # Wait during the gym-type environment is active.
         if not terminated:
+            print("if not terminated")
             self._actual_env_event.wait()
             self._lock.acquire()
 
@@ -184,6 +209,7 @@ class EnvProxy(ABC):
         """Resumes the actual environment and wait for its next stop. Called by the gym-type environment.
         """
         # Resumes the actual environment.
+        print("_sync_gem_env called")
         self._gym_env_event.clear()
         self._actual_env_event.set()
         self._lock.release()

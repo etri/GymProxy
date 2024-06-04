@@ -1,3 +1,6 @@
+import time
+from threading import Thread
+
 import gymnasium as gym
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.utils.metrics import (
@@ -37,7 +40,7 @@ config = (
         env_config=config,
     )
     # Parallelize environment rollouts.
-    .env_runners(num_env_runners=1)
+    .env_runners(num_env_runners=0, num_rollout_workers=0, num_envs_per_env_runner=1)
 )
 algo = config.build()
 
@@ -53,19 +56,19 @@ for i in range(10):
 # Note that we are using a slightly simpler env here (-3.0 to 3.0, instead
 # of -5.0 to 5.0!), however, this should still work as the agent has
 # (hopefully) learned to "just always repeat the observation!".
-env = GamblersProblem()
-# Get the initial observation (some value between -10.0 and 10.0).
-obs, info = env.reset()
-done = False
-total_reward = 0.0
-# Play one episode.
-while not done:
-    # Compute a single action, given the current observation
-    # from the environment.
-    action = algo.compute_single_action(obs)
-    # Apply the computed action in the environment.
-    obs, reward, done, truncated, info = env.step(action)
-    # Sum up rewards for reporting purposes.
-    total_reward += reward
-# Report results.
-print(f"Played 1 episode; total-reward={total_reward}")
+# env = GamblersProblem()
+# # Get the initial observation (some value between -10.0 and 10.0).
+# obs, info = env.reset()
+# done = False
+# total_reward = 0.0
+# # Play one episode.
+# while not done:
+#     # Compute a single action, given the current observation
+#     # from the environment.
+#     action = algo.compute_single_action(obs)
+#     # Apply the computed action in the environment.
+#     obs, reward, done, truncated, info = env.step(action)
+#     # Sum up rewards for reporting purposes.
+#     total_reward += reward
+# # Report results.
+# print(f"Played 1 episode; total-reward={total_reward}")

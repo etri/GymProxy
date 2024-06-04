@@ -47,7 +47,7 @@ class GamblersProblem(BaseEnv):
         # print("winning:", config['winning_capital'])
         s_win = config.get('winning_capital', 100)
         result = Box(low=0, high=s_win, shape=(1,), dtype=np.int_)
-        print(result)
+        #print(result)
         return result
 
     @staticmethod
@@ -60,7 +60,7 @@ class GamblersProblem(BaseEnv):
         config = kwargs
         s_win = config.get('winning_capital', 100)
         result = Box(low=1., high=s_win, shape=(1,), dtype=np.int_)
-        print(result)
+        #print(result)
         return result
 
 
