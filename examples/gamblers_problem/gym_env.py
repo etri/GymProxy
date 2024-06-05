@@ -3,6 +3,7 @@
 """Gym-type environment for simulating gambler's problem example. It is implemented based on the following reference:
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.3: Gambler's Problem).
 """
+import sys
 from typing import Optional
 
 import gymnasium
@@ -59,7 +60,8 @@ class GamblersProblem(BaseEnv):
         """
         config = kwargs
         s_win = config.get('winning_capital', 100)
-        result = Box(low=1., high=s_win, shape=(1,), dtype=np.int_)
+        # result = Box(low=1., high=s_win, shape=(1,), dtype=np.int_)
+        result = Box(low=0., high=s_win, shape=(1,), dtype=np.int_)
         #print(result)
         return result
 

@@ -65,7 +65,7 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
             done: Whether the episode has ended, in which case further step() calls will return undefined results.
             info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
-        print("base_env step", action)
+        #print("base_env step", action)
         self._env_proxy.set_action(action)  # Sends action to the environment proxy.
 
         # Gets tuple of (obs, reward, done, info) from the environment proxy.

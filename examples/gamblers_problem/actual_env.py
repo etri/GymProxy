@@ -42,7 +42,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         # self._p_h = config['prob_head']
         self._p_h = PROB_HEAD
         # self._s = config['initial_capital']
-        self._s = INITIAL_CAPITAL
+        self._s = np.array([INITIAL_CAPITAL])
         # self._s_win = config['winning_capital']
         self._s_win = WINNING_CAPITAL
         self._reward = 0.
@@ -55,6 +55,9 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
 
         try:
+            self._t = 0
+            # if seed_ >= 100:
+            #     print("")
 
             done = False
             truncated = False
@@ -62,9 +65,9 @@ class GamblersProblemActualEnv(BaseActualEnv):
             logger.debug(seed_)
             np.random.seed(seed_)  # added seed
             while self._t < self._num_steps and not done:
-                print("running step {}", self._t)
+
                 obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
-                print("obs {} {} {} {}".format(obs, self._reward, done, truncated, info))
+
                 action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 info = {}
                 #print(obs, action)
@@ -72,7 +75,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 # Amount of betting should be less than difference between the winning and current capitals.
 
                 if action is None:
-                    print("action is None")
+
                     BaseActualEnv.env_proxy.release_lock()
                     BaseActualEnv.env_proxy.set_gym_env_event()
                     exit(1)
@@ -87,9 +90,14 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 logger.debug(r)
 
                 if r < self._p_h:
+                    bet = bet.flatten()
+                    # print(type(self._s), type(bet))
+                    # print("flip_result ", self._s, bet)
                     self._s += bet
                     info['flip_result'] = 'head'
                 else:
+                    bet = bet.flatten()
+                    # print("flip_result ", self._s, bet)
                     self._s -= bet
                     info['flip_result'] = 'tail'
 
@@ -108,6 +116,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
             # Arrives to the end of the episode (terminal state).
             obs = np.array([self._s], dtype=np.int_)
+            obs = obs.flatten()
             done = True
             truncated = True
             GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, truncated, info)
@@ -115,7 +124,6 @@ class GamblersProblemActualEnv(BaseActualEnv):
         # Exception handling block.
         except TerminateGymProxy:
             # Means termination signal triggered by the agent.
-            print("TerminateGymProxy")
             logger.info('Terminating gamblers_problem environment.')
             BaseActualEnv.env_proxy.release_lock()
             BaseActualEnv.env_proxy.set_gym_env_event()

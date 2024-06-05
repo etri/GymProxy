@@ -53,10 +53,10 @@ class BaseActualEnv(ABC):
         :param info: Information that is additionally to be given to the agent.
         :return: action: Action from the agent.
         """
-        print("base_actual_env get_action() called")
+        #print("base_actual_env get_action() called")
         action, closing = BaseActualEnv.env_proxy.get_action(obs, reward, done, truncated, info)
         if closing:
-            print("base_actual_env get_action(): Closing environment")
+            #print("base_actual_env get_action(): Closing environment")
             raise TerminateGymProxy()
         return action
 

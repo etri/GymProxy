@@ -23,7 +23,7 @@ PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 1
+NUM_EPISODES = 101
 
 
 def main():
@@ -37,15 +37,10 @@ def main():
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     env = gym.make(id='GamblersProblem-v0')
-    env2 = gym.make(id='GamblersProblem-v0')
-    #print("env", env)
-    env.close()
-    env2.close()
-
 
     for i in range(0, NUM_EPISODES):
         obs, info = env.reset(seed=i, options={})
-        log_step(0, 0, obs, 0.0, False, False, info, {})
+        log_step(i, 0, obs, 0.0, False, False, info, {})
         # print(obs)
         capital = INITIAL_CAPITAL
         #print("1")
@@ -58,12 +53,16 @@ def main():
             # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-            action = min(obs[0].item(), WINNING_CAPITAL - capital)
+            action = np.array([min(obs[0].item(), WINNING_CAPITAL - capital)])
+            action = action.flatten()
+            # action = min(obs[0].item(), WINNING_CAPITAL - capital)
+            # action = env.action_space.sample()
             #print(action, obs[0].item(), WINNING_CAPITAL-capital)
 
             obs, reward, terminated, truncated, info = env.step(action)
 
             if info["flip_result"] == "head":
+                # print("test", capital, action)
                 capital += action
             else:
                 capital -= action
@@ -71,6 +70,7 @@ def main():
             log_step(i, j, obs, reward, terminated, truncated, info, action)
             j = j + 1
             if terminated:
+                logger.info("\n")
                 break
     env.close()
 
