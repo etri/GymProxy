@@ -25,9 +25,9 @@ tune.run("PPO",
          config={"env": "GamblersProblem-v0",    # Instead of strings e.g. "CartPole-v1", we pass the custom env class
                  "env_config": {"config":config},
                  "num_workers":0,
-                 "evaluation_interval": 1000,
+                 "evaluation_interval": 100,
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
-                 "evaluation_duration_unit": 10000,
+                 "evaluation_duration_unit": 1000,
                  },
          checkpoint_freq=10,
          )

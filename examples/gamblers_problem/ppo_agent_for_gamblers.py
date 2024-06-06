@@ -1,14 +1,19 @@
 from ray.rllib.algorithms.ppo.ppo import PPOConfig
+from ray.tune import register_env
+
+from examples.gamblers_problem import GamblersProblem
+
+# gymnasium.register(id='GamblersProblem-v0', entry_point='examples.gamblers_problem:GamblersProblem')
+register_env("GamblersProblem-v0", GamblersProblem)
 
 # Step 1: Create a PPOConfig object
-config = PPOConfig().environment("CartPole-v1")
+config = PPOConfig().environment("GamblersProblem-v0")
 
 # Step 2: Build the PPOTrainer from the config
 agent = config.build()
 
 # Step 3: Restore the trainer from a checkpoint
 checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-05_20-45-08//PPO_GamblersProblem-v0_0f582_00000_0_2024-06-05_20-45-09//checkpoint_000003//"
-checkpoint_path = "C://Users//labry//ray_results//PPO_2024-05-28_17-35-49//PPO_CartPole-v1_49590_00000_0_2024-05-28_17-35-49//checkpoint_000003//"  # Adjust the path to your checkpoint
 # trainer.restore(checkpoint_path)
 agent.load_checkpoint(checkpoint_path)
 print(agent)
@@ -51,8 +56,9 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
     result_str = step_str + obs_str + reward_str + done_str + truncated_str + info_str + action_str
     logger.info(result_str)
 
-env = gym.make("CartPole-v1")
-obs, info = env.reset()
+
+env = gym.make("GamblersProblem-v0")
+obs, info = env.reset(seed=126)
 while True:
     action = agent.compute_single_action(obs)
     obs, reward, terminated, truncated, info = env.step(action)
