@@ -23,7 +23,7 @@ PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 1
+NUM_EPISODES = 20
 
 
 def main():
@@ -36,9 +36,11 @@ def main():
 
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    env = gym.make(id='GamblersProblem-v0')
 
+    env = gym.make(id='GamblersProblem-v0')
     for i in range(0, NUM_EPISODES):
+
+        logger.info("seed {}".format(i))
         obs, info = env.reset(seed=i, options={})
         log_step(i, 0, obs, 0.0, False, False, info, {})
         # print(obs)
@@ -70,9 +72,10 @@ def main():
             log_step(i, j, obs, reward, terminated, truncated, info, action)
             j = j + 1
             if terminated:
+                env.close()
                 logger.info("\n")
                 break
-    env.close()
+
 
 
 def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated: bool, truncated:bool, info: dict, action: int):

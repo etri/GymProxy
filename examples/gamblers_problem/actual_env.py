@@ -14,6 +14,10 @@ from gymproxy import BaseActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('gamblers_problem_actual_env')
 
+NUM_STEPS = 100
+PROB_HEAD = 0.5
+INITIAL_CAPITAL = 10
+WINNING_CAPITAL = 100
 
 class GamblersProblemActualEnv(BaseActualEnv):
     """External environment class that actually simulates gambler's problem.
@@ -29,11 +33,6 @@ class GamblersProblemActualEnv(BaseActualEnv):
             initial_capital (float): Initial capital.
             winning_capital (float): Capital for winning the game.
         """
-        NUM_STEPS = 100
-        PROB_HEAD = 0.5
-        INITIAL_CAPITAL = 10
-        WINNING_CAPITAL = 100
-
         env_proxy = kwargs.get('env_proxy')
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
@@ -55,6 +54,14 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
 
         try:
+            self._num_steps = NUM_STEPS
+            # self._p_h = config['prob_head']
+            self._p_h = PROB_HEAD
+            # self._s = config['initial_capital']
+            self._s = np.array([INITIAL_CAPITAL])
+            # self._s_win = config['winning_capital']
+            self._s_win = WINNING_CAPITAL
+            self._reward = 0.
             self._t = 0
             # if seed_ >= 100:
             #     print("")
