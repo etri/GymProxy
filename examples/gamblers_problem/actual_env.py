@@ -125,7 +125,8 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     truncated = True
 
                 self._t += 1
-
+                from examples.gamblers_problem.gym_env import GamblersProblem
+                GamblersProblem.update_action_space(self, obs=self._s)
 
             # Arrives to the end of the episode (terminal state).
             obs = np.array([self._s], dtype=np.int_)

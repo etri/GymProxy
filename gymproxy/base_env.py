@@ -10,6 +10,8 @@ import gymnasium
 from gymproxy.base_actual_env import BaseActualEnv
 from gymproxy.env_proxy import EnvProxy
 
+import numpy as np
+
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
@@ -84,12 +86,17 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
         """
         self._env_proxy.close_actual_env()
 
+    @staticmethod
     def update_action_space(self, obs: int):
         """Builds action space.
 
         :param kwargs: Dictionary of keyword arguments for building action space.
         """
-        print("update action space", obs)
+        obs = min(obs, 100 - obs)
+        obs = max(obs, 2)
+        from gymnasium.spaces import Box
+        self.action_space = Box(low=1., high=obs, shape=(1,), dtype=np.int_)
+        # print("update action space", obs)
 
     @staticmethod
     def init_actual_env(kwargs: Optional[dict] = None) -> object:
