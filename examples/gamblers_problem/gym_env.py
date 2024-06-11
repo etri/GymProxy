@@ -46,8 +46,8 @@ class GamblersProblem(BaseEnv):
         """
         config = kwargs
         # print("winning:", config['winning_capital'])
-        s_win = config.get('winning_capital', 100)
-        result = Box(low=0, high=s_win, shape=(1,), dtype=np.int_)
+        s_win = config.get('winning_capital', 1000)
+        result = Box(low=-100, high=1000, shape=(1,), dtype=np.int_)
         #print(result)
         return result
 
@@ -64,6 +64,12 @@ class GamblersProblem(BaseEnv):
         result = Box(low=0., high=s_win, shape=(1,), dtype=np.int_)
         #print(result)
         return result
+
+    def sample_action(self, cash_in_hand):
+        cash_in_hand = max(cash_in_hand, 2)
+        my_action = np.random.randint(1, cash_in_hand)
+        # logger.info("my_action: {}".format(my_action))
+        return my_action
 
 
 # from ray import tune

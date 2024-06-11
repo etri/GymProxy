@@ -84,6 +84,13 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
         """
         self._env_proxy.close_actual_env()
 
+    def update_action_space(self, obs: int):
+        """Builds action space.
+
+        :param kwargs: Dictionary of keyword arguments for building action space.
+        """
+        print("update action space", obs)
+
     @staticmethod
     def init_actual_env(kwargs: Optional[dict] = None) -> object:
         """Initializes the actual environment.

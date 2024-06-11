@@ -13,7 +13,10 @@ config = PPOConfig().environment("GamblersProblem-v0")
 agent = config.build()
 
 # Step 3: Restore the trainer from a checkpoint
-checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-05_20-45-08//PPO_GamblersProblem-v0_0f582_00000_0_2024-06-05_20-45-09//checkpoint_000003//"
+# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-05_20-45-08//PPO_GamblersProblem-v0_0f582_00000_0_2024-06-05_20-45-09//checkpoint_000003//"
+# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_18-58-23//PPO_GamblersProblem-v0_cf047_00000_0_2024-06-09_18-58-23//checkpoint_000013//"
+# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_21-40-05//PPO_GamblersProblem-v0_65d28_00000_0_2024-06-09_21-40-05//checkpoint_000013"
+checkpoint_path ="C://Users//ADMIN//ray_results//PPO_2024-06-10_23-55-43//PPO_GamblersProblem-v0_831dc_00000_0_2024-06-10_23-55-43//checkpoint_000008//"
 # trainer.restore(checkpoint_path)
 agent.load_checkpoint(checkpoint_path)
 print(agent)
@@ -58,13 +61,20 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
 
 
 env = gym.make("GamblersProblem-v0")
-obs, info = env.reset(seed=126)
-while True:
-    action = agent.compute_single_action(obs)
-    obs, reward, terminated, truncated, info = env.step(action)
-    log_step(1, 1, obs, reward, terminated, truncated, info, action)
-    env.render()
-    if terminated:
-        break
-env.close()
+total_reward = 0
+NUM_EPISODES = 1000
 
+for i in range(0, NUM_EPISODES):
+    obs, info = env.reset(seed=i)
+    logger.info("obs {} and info: {}".format(obs, info))
+    while True:
+        action = agent.compute_single_action(observation=obs, info=info)
+        obs, reward, terminated, truncated, info = env.step(action)
+        total_reward += reward
+        log_step(i, 1, obs, reward, terminated, truncated, info, action)
+        env.render()
+        if terminated:
+            break
+    env.close()
+
+logger.info("total reward: {}".format(total_reward))

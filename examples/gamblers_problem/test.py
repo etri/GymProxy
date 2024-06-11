@@ -6,9 +6,11 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 """
 
 import logging
-import numpy as np
 
 from examples.gamblers_problem import *
+import numpy as np
+
+# from examples.gamblers_problem import *
 
 # Setting logger
 FORMAT = "[%(asctime)s|%(levelname)s|%(name)s] %(message)s"
@@ -23,7 +25,7 @@ PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 20
+NUM_EPISODES = 1
 
 
 def main():
@@ -38,6 +40,7 @@ def main():
 
 
     env = gym.make(id='GamblersProblem-v0')
+    total_reward = 0
     for i in range(0, NUM_EPISODES):
 
         logger.info("seed {}".format(i))
@@ -55,14 +58,14 @@ def main():
             # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-            action = np.array([min(obs[0].item(), WINNING_CAPITAL - capital)])
+            action = np.array([min(env.sample_action(obs), WINNING_CAPITAL - capital)])
             action = action.flatten()
             # action = min(obs[0].item(), WINNING_CAPITAL - capital)
             # action = env.action_space.sample()
             #print(action, obs[0].item(), WINNING_CAPITAL-capital)
 
             obs, reward, terminated, truncated, info = env.step(action)
-
+            total_reward += reward
             if info["flip_result"] == "head":
                 # print("test", capital, action)
                 capital += action
@@ -75,6 +78,8 @@ def main():
                 env.close()
                 logger.info("\n")
                 break
+
+    logger.info("total reward: {}".format(total_reward))
 
 
 

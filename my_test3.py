@@ -8,7 +8,7 @@ from ray.rllib.utils.metrics import (
 )
 from ray.tune import register_env
 
-EPISODE_RETURN_MEAN = "episode_return_mean"
+EPISODE_REWARD_MEAN = "episode_reward_mean"
 
 NUM_STEPS = 100
 PROB_HEAD = 0.5
@@ -54,7 +54,7 @@ algo = config.build()
 # we can expect to reach an optimal episode reward of 0.0.
 for i in range(10):
     results = algo.train()
-    print(f"Iter: {i}; avg. reward={results[ENV_RUNNER_RESULTS][EPISODE_RETURN_MEAN]}")
+    print(f"Iter: {i}; avg. reward={results[ENV_RUNNER_RESULTS][EPISODE_REWARD_MEAN]}")
 
 # Perform inference (action computations) based on given env observations.
 # Note that we are using a slightly simpler env here (-3.0 to 3.0, instead

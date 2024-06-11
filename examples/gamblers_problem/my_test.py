@@ -29,5 +29,6 @@ tune.run("PPO",
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
                  "evaluation_duration_unit": 1000,
                  },
+         # keep_checkpoints_num=100,
          checkpoint_freq=10,
          )

@@ -33,7 +33,7 @@ class EnvProxy(ABC):
         # Prepares a thread pool and synchronization variables.
         self._pool = ThreadPoolExecutor(max_workers=1)
         self._future = None
-        #print("EnvProxy __init__ called self._lock = Lock()")
+        # print("EnvProxy __init__ called self._lock = Lock()")
         self._lock = Lock()                 # For locking a critical section.
         self._actual_env_event = Event()    # Event for signaling the actual environment to enter the critical section.
         self._gym_env_event = Event()       # Event for signaling gym-type environment to enter the critical section.

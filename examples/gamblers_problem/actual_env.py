@@ -65,7 +65,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             self._t = 0
             # if seed_ >= 100:
             #     print("")
-
+            # logger.info("Starting gambler's self._s=" + str(self._s))
             done = False
             truncated = False
             info = {}
@@ -74,8 +74,13 @@ class GamblersProblemActualEnv(BaseActualEnv):
             while self._t < self._num_steps and not done:
 
                 obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
+                obs = obs.flatten()
+                if obs.item() < 0 or obs.item() > 100:
+                    logger.info("obs in run: ", obs)
 
+                # logger.info("current obs: {}".format(obs))
                 action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
+                # logger.info("current action {} and obs: {}".format(action, obs))
                 info = {}
                 #print(obs, action)
 
@@ -120,6 +125,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     truncated = True
 
                 self._t += 1
+
 
             # Arrives to the end of the episode (terminal state).
             obs = np.array([self._s], dtype=np.int_)
