@@ -15,8 +15,8 @@ from gymproxy import BaseActualEnv, TerminateGymProxy
 logger = logging.getLogger('gamblers_problem_actual_env')
 
 NUM_STEPS = 100
-PROB_HEAD = 0.5
-INITIAL_CAPITAL = 10
+PROB_HEAD = 0.4
+INITIAL_CAPITAL = 20
 WINNING_CAPITAL = 100
 
 class GamblersProblemActualEnv(BaseActualEnv):
@@ -46,6 +46,8 @@ class GamblersProblemActualEnv(BaseActualEnv):
         self._s_win = WINNING_CAPITAL
         self._reward = 0.
         self._t = 0
+        from examples.gamblers_problem.gym_env import GamblersProblem
+        GamblersProblem.update_action_space(self, obs=self._s[0])
 
     def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs gambler's problem environment.

@@ -3,6 +3,7 @@
 """Gym-type environment for simulating gambler's problem example. It is implemented based on the following reference:
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.3: Gambler's Problem).
 """
+import logging
 import sys
 from typing import Optional
 
@@ -13,6 +14,7 @@ from gymnasium.spaces import Box
 from examples.gamblers_problem.actual_env import GamblersProblemActualEnv
 from gymproxy import BaseEnv
 
+logger = logging.getLogger('gamblers_problem')
 
 class GamblersProblem(BaseEnv):
     """Class defining observation and action spaces of gym-type GamblersProblem environment.
@@ -27,6 +29,9 @@ class GamblersProblem(BaseEnv):
         PROB_HEAD = 0.5
         INITIAL_CAPITAL = 10
         WINNING_CAPITAL = 100
+
+        from examples.gamblers_problem.gym_env import GamblersProblem
+        GamblersProblem.update_action_space(self, obs=INITIAL_CAPITAL)
 
         if kwargs is None:
             kwargs = {'num_steps': NUM_STEPS,
@@ -64,6 +69,18 @@ class GamblersProblem(BaseEnv):
         result = Box(low=0., high=s_win, shape=(1,), dtype=np.int_)
         #print(result)
         return result
+
+    @staticmethod
+    def update_action_space(self, obs: int):
+        """Builds action space.
+
+        :param kwargs: Dictionary of keyword arguments for building action space.
+        """
+        obs = min(obs, 100 - obs)
+        obs = max(obs, 2)
+        self.action_space = Box(low=1., high=obs, shape=(1,), dtype=np.int_)
+        logger.info("update action space {}".format(obs))
+        # print("update action space", obs)
 
     def sample_action(self, cash_in_hand):
         cash_in_hand = max(cash_in_hand, 2)

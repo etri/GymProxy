@@ -16,10 +16,13 @@ agent = config.build()
 # checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-05_20-45-08//PPO_GamblersProblem-v0_0f582_00000_0_2024-06-05_20-45-09//checkpoint_000003//"
 # checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_18-58-23//PPO_GamblersProblem-v0_cf047_00000_0_2024-06-09_18-58-23//checkpoint_000013//"
 # checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_21-40-05//PPO_GamblersProblem-v0_65d28_00000_0_2024-06-09_21-40-05//checkpoint_000013"
-checkpoint_path ="C://Users//ADMIN//ray_results//PPO_2024-06-10_23-55-43//PPO_GamblersProblem-v0_831dc_00000_0_2024-06-10_23-55-43//checkpoint_000008//"
+# checkpoint_path ="C://Users//ADMIN//ray_results//PPO_2024-06-10_23-55-43//PPO_GamblersProblem-v0_831dc_00000_0_2024-06-10_23-55-43//checkpoint_000008//"
+# checkpoint_path = "C:/Users/labry/ray_results/PPO_2024-06-12_10-56-24/PPO_GamblersProblem-v0_f96f8_00000_0_2024-06-12_10-56-24/checkpoint_000013/"
 # trainer.restore(checkpoint_path)
+checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
+
 agent.load_checkpoint(checkpoint_path)
-print(agent)
+print("agent:", agent)
 
 import gymnasium as gym
 import logging
@@ -31,6 +34,9 @@ DATE_FMT = "%H:%M:%S %Y-%m-%d"
 log_level = logging.INFO
 logging.basicConfig(format=FORMAT, datefmt=DATE_FMT, level=log_level)
 logger = logging.getLogger('main')
+
+
+
 
 def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated: bool, truncated:bool, info: dict, action: int):
     """Utility function for printing logs.
@@ -61,6 +67,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
 
 
 env = gym.make("GamblersProblem-v0")
+
 total_reward = 0
 NUM_EPISODES = 1000
 
@@ -68,7 +75,7 @@ for i in range(0, NUM_EPISODES):
     obs, info = env.reset(seed=i)
     logger.info("obs {} and info: {}".format(obs, info))
     while True:
-        action = agent.compute_single_action(observation=obs, info=info)
+        action = np.array([max(min(agent.compute_single_action(observation=obs, info=info), obs[0]),1)])
         obs, reward, terminated, truncated, info = env.step(action)
         total_reward += reward
         log_step(i, 1, obs, reward, terminated, truncated, info, action)
