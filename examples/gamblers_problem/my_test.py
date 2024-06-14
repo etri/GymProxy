@@ -1,7 +1,11 @@
 import gymnasium
+from gymnasium.spaces import Box
 from ray.tune import register_env
 
 from examples.gamblers_problem import GamblersProblem
+
+from gymnasium.wrappers import RescaleAction
+import numpy as np
 
 # gymnasium.register(id='GamblersProblem-v0', entry_point='examples.gamblers_problem:GamblersProblem')
 register_env("GamblersProblem-v0", GamblersProblem)
@@ -28,6 +32,7 @@ tune.run("PPO",
                  "evaluation_interval": 100,
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
                  "evaluation_duration_unit": 1000,
+                 "normalize_actions": False,
                  #"clip_actions": True,
                  },
          # keep_checkpoints_num=100,

@@ -27,11 +27,11 @@ class GamblersProblem(BaseEnv):
         # Environment configuration parameters.
         NUM_STEPS = 100
         PROB_HEAD = 0.5
-        INITIAL_CAPITAL = 10
+        INITIAL_CAPITAL = 20
         WINNING_CAPITAL = 100
 
         from examples.gamblers_problem.gym_env import GamblersProblem
-        GamblersProblem.update_action_space(self, obs=INITIAL_CAPITAL)
+        # GamblersProblem.update_action_space(self, obs=INITIAL_CAPITAL)
 
         if kwargs is None:
             kwargs = {'num_steps': NUM_STEPS,
@@ -66,7 +66,7 @@ class GamblersProblem(BaseEnv):
         config = kwargs
         s_win = config.get('winning_capital', 100)
         # result = Box(low=1., high=s_win, shape=(1,), dtype=np.int_)
-        result = Box(low=0., high=s_win, shape=(1,), dtype=np.int_)
+        result = Box(low=0., high=1.0, shape=(1,), dtype=np.float_)
         #print(result)
         return result
 
@@ -76,9 +76,9 @@ class GamblersProblem(BaseEnv):
 
         :param kwargs: Dictionary of keyword arguments for building action space.
         """
-        obs = min(obs, 100 - obs)
-        obs = max(obs, 2)
-        self.action_space = Box(low=1., high=obs, shape=(1,), dtype=np.int_)
+        # obs = min(obs, 100 - obs)
+        # obs = max(obs, 2)
+        # self.action_space = Box(low=1., high=obs, shape=(1,), dtype=np.int_)
         logger.info("update action space {}".format(obs))
         # print("update action space", obs)
 

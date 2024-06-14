@@ -15,8 +15,8 @@ from gymproxy import BaseActualEnv, TerminateGymProxy
 logger = logging.getLogger('gamblers_problem_actual_env')
 
 NUM_STEPS = 100
-PROB_HEAD = 0.4
-INITIAL_CAPITAL = 20
+PROB_HEAD = 0.6
+INITIAL_CAPITAL = 30
 WINNING_CAPITAL = 100
 
 class GamblersProblemActualEnv(BaseActualEnv):
@@ -47,7 +47,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
         self._reward = 0.
         self._t = 0
         from examples.gamblers_problem.gym_env import GamblersProblem
-        GamblersProblem.update_action_space(self, obs=self._s[0])
+        # GamblersProblem.update_action_space(self, obs=self._s[0])
 
     def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs gambler's problem environment.
@@ -81,8 +81,10 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     logger.info("obs in run: ", obs)
 
                 # logger.info("current obs: {}".format(obs))
-                action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
+                raw_action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 # logger.info("current action {} and obs: {}".format(action, obs))
+                action = np.array(max(int(raw_action[0] * obs[0]), 1))
+                # logger.info("action {}".format(action))
                 info = {}
                 #print(obs, action)
 
@@ -100,16 +102,19 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
                 # Flips the coin
                 r = np.random.rand()
+                # logger.info("r {}".format(r))
                 logger.debug(self._p_h)
                 logger.debug(r)
 
                 if r < self._p_h:
+                    # logger.info("heads")
                     bet = bet.flatten()
                     # print(type(self._s), type(bet))
                     # print("flip_result ", self._s, bet)
                     self._s += bet
                     info['flip_result'] = 'head'
                 else:
+                    # logger.info("tails")
                     bet = bet.flatten()
                     # print("flip_result ", self._s, bet)
                     self._s -= bet
@@ -125,10 +130,11 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     info['msg'] = 'Loses the game due to out of money.'
                     done = True
                     truncated = True
+                    self._reward = -0.9
 
                 self._t += 1
                 from examples.gamblers_problem.gym_env import GamblersProblem
-                GamblersProblem.update_action_space(self, obs=self._s)
+                # GamblersProblem.update_action_space(self, obs=self._s)
 
             # Arrives to the end of the episode (terminal state).
             obs = np.array([self._s], dtype=np.int_)

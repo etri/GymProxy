@@ -25,7 +25,7 @@ PROB_HEAD = 0.5
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 1000
+NUM_EPISODES = 100
 
 
 def main():
@@ -53,18 +53,27 @@ def main():
         # obs, info = env.reset(seed=126, options={})
         #print(obs, info)
         #logger.info(str(obs))
+        pre_obs = obs[0]
         while True:
             env.render()
             # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-            action = np.array([min(env.sample_action(obs), WINNING_CAPITAL - capital)])
-            action = action.flatten()
+
+            action = env.action_space.sample()
+            #
+            # action = np.array([min(raw_action, WINNING_CAPITAL - capital)])
+            # action = action.flatten()
+
             # action = min(obs[0].item(), WINNING_CAPITAL - capital)
             # action = env.action_space.sample()
             #print(action, obs[0].item(), WINNING_CAPITAL-capital)
 
             obs, reward, terminated, truncated, info = env.step(action)
+
+            action = max(int(action[0] * pre_obs), 1)
+            pre_obs = obs[0]
+
             total_reward += reward
             if info["flip_result"] == "head":
                 # print("test", capital, action)
