@@ -20,7 +20,7 @@ agent = config.build()
 # checkpoint_path = "C:/Users/labry/ray_results/PPO_2024-06-12_10-56-24/PPO_GamblersProblem-v0_f96f8_00000_0_2024-06-12_10-56-24/checkpoint_000013/"
 # trainer.restore(checkpoint_path)
 # checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
-checkpoint_path = "C:/Users/labry/ray_results/PPO_2024-06-14_17-23-26/PPO_GamblersProblem-v0_5f88d_00000_0_2024-06-14_17-23-26/checkpoint_000002"
+checkpoint_path = "C:/Users/ADMIN/ray_results/PPO_2024-06-14_19-38-33/PPO_GamblersProblem-v0_3fc5c_00000_0_2024-06-14_19-38-33/checkpoint_000009"
 
 agent.load_checkpoint(checkpoint_path)
 print("agent:", agent)
@@ -62,7 +62,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
     done_str = 'terminated: {} / '.format(terminated)
     truncated_str = 'truncated: {} / '.format(truncated)
     info_str = 'info: {} / '.format(info)
-    action_str = 'action: {}'.format((max(int(bet * capital), 1)))
+    action_str = 'action: {}'.format(bet)
     result_str = step_str + obs_str + reward_str + done_str + truncated_str + info_str + action_str
     logger.info(result_str)
 
@@ -70,14 +70,20 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
 env = gym.make("GamblersProblem-v0")
 
 total_reward = 0
-NUM_EPISODES = 1
+NUM_EPISODES = 1000
 
 for i in range(0, NUM_EPISODES):
     obs, info = env.reset(seed=i)
+    pre_obs = obs[0]
     logger.info("obs {} and info: {}".format(obs, info))
     while True:
         action = agent.compute_single_action(observation=obs, info=info)
         obs, reward, terminated, truncated, info = env.step(action)
+        action = max(round(action[0] * pre_obs), 1)
+        pre_obs = obs[0]
+        # logger.info("action {} and info: {}".format(action, info))
+        if reward < 0:
+            reward = 0
         total_reward += reward
         log_step(i, 1, obs, reward, terminated, truncated, info, action)
         env.render()
