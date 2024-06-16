@@ -20,7 +20,7 @@ agent = config.build()
 # checkpoint_path = "C:/Users/labry/ray_results/PPO_2024-06-12_10-56-24/PPO_GamblersProblem-v0_f96f8_00000_0_2024-06-12_10-56-24/checkpoint_000013/"
 # trainer.restore(checkpoint_path)
 # checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
-checkpoint_path = "C:/Users/ADMIN/ray_results/PPO_2024-06-14_19-38-33/PPO_GamblersProblem-v0_3fc5c_00000_0_2024-06-14_19-38-33/checkpoint_000009"
+checkpoint_path = "C:/Users/ADMIN/ray_results/PPO_2024-06-15_20-45-40/PPO_GamblersProblem-v0_ca369_00000_0_2024-06-15_20-45-40/checkpoint_000009/"
 
 agent.load_checkpoint(checkpoint_path)
 print("agent:", agent)

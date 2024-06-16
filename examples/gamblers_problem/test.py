@@ -39,7 +39,7 @@ def main():
     # metadata_ = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
 
-    env = gym.make(id='GamblersProblem-v0')
+    env = gym.make(id='GamblersProblem-v0', config=config)
     total_reward = 0
     for i in range(0, NUM_EPISODES):
 
@@ -56,22 +56,14 @@ def main():
         pre_obs = obs[0]
         while True:
             env.render()
-            # action = env.action_space.sample()  # Means random agent
 
             # Amount of betting should be less than current capital.
-
             action = env.action_space.sample()
-            #
-            # action = np.array([min(raw_action, WINNING_CAPITAL - capital)])
-            # action = action.flatten()
-
-            # action = min(obs[0].item(), WINNING_CAPITAL - capital)
-            # action = env.action_space.sample()
-            #print(action, obs[0].item(), WINNING_CAPITAL-capital)
+            # action = np.array([0.1])
 
             obs, reward, terminated, truncated, info = env.step(action)
-
-            action = max(int(action[0] * pre_obs), 1)
+            multiplier = min(pre_obs, 100-pre_obs)
+            action = max(round(action[0] * multiplier), 1)
             pre_obs = obs[0]
 
             total_reward += reward

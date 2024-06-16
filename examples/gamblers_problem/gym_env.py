@@ -19,7 +19,7 @@ logger = logging.getLogger('gamblers_problem')
 class GamblersProblem(BaseEnv):
     """Class defining observation and action spaces of gym-type GamblersProblem environment.
     """
-    def __init__(self, kwargs: Optional[dict] = None):
+    def __init__(self, config: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -33,14 +33,14 @@ class GamblersProblem(BaseEnv):
         from examples.gamblers_problem.gym_env import GamblersProblem
         # GamblersProblem.update_action_space(self, obs=INITIAL_CAPITAL)
 
-        if kwargs is None:
-            kwargs = {'num_steps': NUM_STEPS,
+        if config is None:
+            config = {'num_steps': NUM_STEPS,
                       'prob_head': PROB_HEAD,
                       'initial_capital': INITIAL_CAPITAL,
                       'winning_capital': WINNING_CAPITAL}
 
         BaseEnv.actual_env_class = GamblersProblemActualEnv
-        super().__init__(kwargs)
+        super().__init__(config)
 
     @staticmethod
     def build_obs_space(kwargs: Optional[dict] = None) -> gymnasium.Space:
@@ -51,8 +51,8 @@ class GamblersProblem(BaseEnv):
         """
         config = kwargs
         # print("winning:", config['winning_capital'])
-        s_win = config.get('winning_capital', 1000)
-        result = Box(low=-100, high=1000, shape=(1,), dtype=np.int_)
+        s_win = config.get('winning_capital', 100)
+        result = Box(low=0, high=100, shape=(1,), dtype=np.int_)
         #print(result)
         return result
 

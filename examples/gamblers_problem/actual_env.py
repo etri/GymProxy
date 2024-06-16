@@ -77,13 +77,15 @@ class GamblersProblemActualEnv(BaseActualEnv):
 
                 obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
                 obs = obs.flatten()
-                if obs.item() < 0 or obs.item() > 100:
+                if obs[0] < 0 or obs[0] > 100:
                     logger.info("obs in run: ", obs)
+                    print("obs in run: ", obs)
 
                 # logger.info("current obs: {}".format(obs))
                 raw_action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
                 # logger.info("current action {} and obs: {} action*obs {}".format(raw_action, obs, raw_action[0]*obs[0]))
-                action = np.array(max(round(raw_action[0] * obs[0]), 1))
+                raw_action = np.array(max(round(raw_action[0] * obs[0]), 1))
+                action = min(raw_action, self._s, self._s_win - self._s)
                 # logger.info("action {}".format(action))
                 info = {}
                 #print(obs, action)
@@ -98,7 +100,8 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 else:
                     tmp = action
                     #print("tmp {}, self._s_win {} self._s {}".format(tmp, self._s_win, self._s))
-                    bet = min(action, self._s_win - self._s)
+                    bet = action
+                    # logger.info("bet: {} action {} s_win - s {}".format(bet, action, self._s_win-self._s))
 
                 # Flips the coin
                 r = np.random.rand()
@@ -130,6 +133,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     info['msg'] = 'Loses the game due to out of money.'
                     done = True
                     truncated = True
+                    self._s = 0
                     self._reward = -0.9
 
                 self._t += 1
