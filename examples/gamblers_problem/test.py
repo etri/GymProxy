@@ -21,11 +21,11 @@ logger = logging.getLogger('main')
 
 # Environment configuration parameters.
 NUM_STEPS = 100
-PROB_HEAD = 0.5
-INITIAL_CAPITAL = 10
+PROB_HEAD = 0.6
+INITIAL_CAPITAL = 30
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 1
+NUM_EPISODES = 100
 
 
 def main():
@@ -44,7 +44,7 @@ def main():
     for i in range(0, NUM_EPISODES):
 
         logger.info("seed {}".format(i))
-        obs, info = env.reset(seed=i, options={})
+        obs, info = env.reset(seed=i, options=config)
         log_step(i, 0, obs, 0.0, False, False, info, {})
         # print(obs)
         capital = INITIAL_CAPITAL

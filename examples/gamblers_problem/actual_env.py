@@ -14,10 +14,10 @@ from gymproxy import BaseActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('gamblers_problem_actual_env')
 
-NUM_STEPS = 100
-PROB_HEAD = 0.6
-INITIAL_CAPITAL = 30
-WINNING_CAPITAL = 100
+# NUM_STEPS = 100
+# PROB_HEAD = 0.6
+# INITIAL_CAPITAL = 30
+# WINNING_CAPITAL = 100
 
 class GamblersProblemActualEnv(BaseActualEnv):
     """External environment class that actually simulates gambler's problem.
@@ -37,13 +37,13 @@ class GamblersProblemActualEnv(BaseActualEnv):
         BaseActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
         # self._num_steps = config['num_steps']
-        self._num_steps = NUM_STEPS
+        self._num_steps = kwargs['num_steps']
         # self._p_h = config['prob_head']
-        self._p_h = PROB_HEAD
+        self._p_h = kwargs['prob_head']
         # self._s = config['initial_capital']
-        self._s = np.array([INITIAL_CAPITAL])
+        self._s = np.array([kwargs['initial_capital']])
         # self._s_win = config['winning_capital']
-        self._s_win = WINNING_CAPITAL
+        self._s_win = kwargs['winning_capital']
         self._reward = 0.
         self._t = 0
         from examples.gamblers_problem.gym_env import GamblersProblem
@@ -56,13 +56,13 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
 
         try:
-            self._num_steps = NUM_STEPS
+            self._num_steps = kwargs['num_steps']
             # self._p_h = config['prob_head']
-            self._p_h = PROB_HEAD
+            self._p_h = kwargs['prob_head']
             # self._s = config['initial_capital']
-            self._s = np.array([INITIAL_CAPITAL])
+            self._s = np.array([kwargs['initial_capital']])
             # self._s_win = config['winning_capital']
-            self._s_win = WINNING_CAPITAL
+            self._s_win = kwargs['winning_capital']
             self._reward = 0.
             self._t = 0
             # if seed_ >= 100:

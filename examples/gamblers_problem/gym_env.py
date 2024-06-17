@@ -34,6 +34,7 @@ class GamblersProblem(BaseEnv):
         # GamblersProblem.update_action_space(self, obs=INITIAL_CAPITAL)
 
         if config is None:
+            logger.info("config is None.")
             config = {'num_steps': NUM_STEPS,
                       'prob_head': PROB_HEAD,
                       'initial_capital': INITIAL_CAPITAL,
