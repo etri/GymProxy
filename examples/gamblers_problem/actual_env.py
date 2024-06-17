@@ -8,6 +8,7 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 import logging
 import numpy as np
 import random
+import copy
 from typing import Optional
 
 from gymproxy import BaseActualEnv, TerminateGymProxy
@@ -41,7 +42,9 @@ class GamblersProblemActualEnv(BaseActualEnv):
         # self._p_h = config['prob_head']
         self._p_h = kwargs['prob_head']
         # self._s = config['initial_capital']
-        self._s = np.array([kwargs['initial_capital']])
+        self._ic = np.array([copy.deepcopy(kwargs['initial_capital'])])
+        # Create a copy of the _ic array to ensure _s is not just a reference
+        self._s = np.copy(self._ic)
         # self._s_win = config['winning_capital']
         self._s_win = kwargs['winning_capital']
         self._reward = 0.
@@ -56,13 +59,21 @@ class GamblersProblemActualEnv(BaseActualEnv):
         """
 
         try:
-            self._num_steps = kwargs['num_steps']
-            # self._p_h = config['prob_head']
-            self._p_h = kwargs['prob_head']
-            # self._s = config['initial_capital']
-            self._s = np.array([kwargs['initial_capital']])
-            # self._s_win = config['winning_capital']
-            self._s_win = kwargs['winning_capital']
+            # if kwargs is None:
+            #     kwargs = {"num_steps" :100,
+            #                 "prob_head":0.6,
+            #                 "initial_capital":30,
+            #                 "winning_capital":100,
+            #     }
+            #
+            # self._num_steps = kwargs['num_steps']
+            # # self._p_h = config['prob_head']
+            # self._p_h = kwargs['prob_head']
+            self._s = np.copy(self._ic)
+            # print("self._s {} self._ic {}".format(self._s, self._ic))
+            # self._s = np.array([kwargs['initial_capital']])
+            # # self._s_win = config['winning_capital']
+            # self._s_win = kwargs['winning_capital']
             self._reward = 0.
             self._t = 0
             # if seed_ >= 100:
@@ -129,11 +140,12 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     done = True
                     truncated = True
                     self._reward = 1.
+                    # self._s = self._ic
                 elif self._s <= 0.:
                     info['msg'] = 'Loses the game due to out of money.'
                     done = True
                     truncated = True
-                    self._s = 0
+                    # self._s = self._ic
                     self._reward = -0.9
 
                 self._t += 1
