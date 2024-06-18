@@ -22,10 +22,10 @@ logger = logging.getLogger('main')
 # Environment configuration parameters.
 NUM_STEPS = 100
 PROB_HEAD = 0.6
-INITIAL_CAPITAL = 30
+INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
-NUM_EPISODES = 100
+NUM_EPISODES = 10000
 
 
 def main():
@@ -65,7 +65,8 @@ def main():
             multiplier = min(pre_obs, 100-pre_obs)
             action = max(round(action[0] * multiplier), 1)
             pre_obs = obs[0]
-
+            if reward < 0:
+                reward = 0
             total_reward += reward
             if info["flip_result"] == "head":
                 # print("test", capital, action)
@@ -80,7 +81,7 @@ def main():
                 logger.info("\n")
                 break
 
-    logger.info("total reward: {}".format(total_reward))
+    logger.info("total reward: {}".format(total_reward/2))
 
 
 

@@ -26,8 +26,8 @@ class GamblersProblem(BaseEnv):
         """
         # Environment configuration parameters.
         NUM_STEPS = 100
-        PROB_HEAD = 0.5
-        INITIAL_CAPITAL = 20
+        PROB_HEAD = 0.6
+        INITIAL_CAPITAL = 10
         WINNING_CAPITAL = 100
 
         from examples.gamblers_problem.gym_env import GamblersProblem

@@ -17,7 +17,7 @@ from ray import tune
 
 NUM_STEPS = 100
 PROB_HEAD = 0.6
-INITIAL_CAPITAL = 30
+INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
 
 config = {'num_steps': NUM_STEPS,

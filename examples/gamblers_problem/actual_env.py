@@ -139,20 +139,22 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                     done = True
                     truncated = True
-                    self._reward = 1.
+                    self._reward = 2.
                     # self._s = self._ic
                 elif self._s <= 0.:
                     info['msg'] = 'Loses the game due to out of money.'
                     done = True
                     truncated = True
                     # self._s = self._ic
-                    self._reward = -0.9
+                    self._reward = -0.5
 
                 self._t += 1
                 from examples.gamblers_problem.gym_env import GamblersProblem
                 # GamblersProblem.update_action_space(self, obs=self._s)
 
             # Arrives to the end of the episode (terminal state).
+            if self._t >= self._num_steps and self._reward == 0:
+                self._reward = -1.
             obs = np.array([self._s], dtype=np.int_)
             obs = obs.flatten()
             done = True

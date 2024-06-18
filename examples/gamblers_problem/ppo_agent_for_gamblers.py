@@ -3,24 +3,27 @@ from ray.tune import register_env
 
 from examples.gamblers_problem import GamblersProblem
 
+NUM_STEPS = 100
+PROB_HEAD = 0.6
+INITIAL_CAPITAL = 10
+WINNING_CAPITAL = 100
+
+config = {'num_steps': NUM_STEPS,
+          'prob_head': PROB_HEAD,
+          'initial_capital': INITIAL_CAPITAL,
+          'winning_capital': WINNING_CAPITAL}
 # gymnasium.register(id='GamblersProblem-v0', entry_point='examples.gamblers_problem:GamblersProblem')
 register_env("GamblersProblem-v0", GamblersProblem)
 
 # Step 1: Create a PPOConfig object
-config = PPOConfig().environment("GamblersProblem-v0")
+config = PPOConfig().environment("GamblersProblem-v0", env_config=config)
 
 # Step 2: Build the PPOTrainer from the config
 agent = config.build()
 
 # Step 3: Restore the trainer from a checkpoint
-# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-05_20-45-08//PPO_GamblersProblem-v0_0f582_00000_0_2024-06-05_20-45-09//checkpoint_000003//"
-# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_18-58-23//PPO_GamblersProblem-v0_cf047_00000_0_2024-06-09_18-58-23//checkpoint_000013//"
-# checkpoint_path = "C://Users//ADMIN//ray_results//PPO_2024-06-09_21-40-05//PPO_GamblersProblem-v0_65d28_00000_0_2024-06-09_21-40-05//checkpoint_000013"
-# checkpoint_path ="C://Users//ADMIN//ray_results//PPO_2024-06-10_23-55-43//PPO_GamblersProblem-v0_831dc_00000_0_2024-06-10_23-55-43//checkpoint_000008//"
-# checkpoint_path = "C:/Users/labry/ray_results/PPO_2024-06-12_10-56-24/PPO_GamblersProblem-v0_f96f8_00000_0_2024-06-12_10-56-24/checkpoint_000013/"
-# trainer.restore(checkpoint_path)
 # checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
-checkpoint_path = "C:/Users/ADMIN/ray_results/PPO_2024-06-15_20-45-40/PPO_GamblersProblem-v0_ca369_00000_0_2024-06-15_20-45-40/checkpoint_000009/"
+checkpoint_path = "C:/ray_results/PPO_2024-06-18_21-38-20/PPO_a4f9b_00000/checkpoint_000008"
 
 agent.load_checkpoint(checkpoint_path)
 print("agent:", agent)
@@ -70,7 +73,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, terminated
 env = gym.make("GamblersProblem-v0")
 
 total_reward = 0
-NUM_EPISODES = 1000
+NUM_EPISODES = 10000
 
 for i in range(0, NUM_EPISODES):
     obs, info = env.reset(seed=i)
@@ -91,4 +94,4 @@ for i in range(0, NUM_EPISODES):
             break
     env.close()
 
-logger.info("total reward: {}".format(total_reward))
+logger.info("total reward: {}".format(total_reward/2))
