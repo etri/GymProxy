@@ -27,7 +27,7 @@ RENTAL_RATE_1 = 3
 RETURN_RATE_0 = 3
 RETURN_RATE_1 = 2
 
-NUM_EPISODES = 10
+NUM_EPISODES = 1
 
 
 def main():
@@ -53,6 +53,7 @@ def main():
         logger.info(str(obs)+ str(info))
         while True:
             env.render()
+            env.action_space.seed(1) # to reproduce errors to debug
             action = env.action_space.sample()  # Means random agent.
             # ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))
             # action = ready.sample()

@@ -96,6 +96,8 @@ class CarRentalActualEnv(BaseActualEnv):
                 # Rents cars for requests at each location.
                 self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
                 self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
+                logger.info("self_available_cars[0] {} n_req_0 {}".format(self._available_cars[0], n_req_0))
+                logger.info("self_available_cars[1] {} n_req_1 {}".format(self._available_cars[1], n_req_1))
 
                 # Observation consists of the numbers of available cars at the two locations.
 
@@ -124,11 +126,13 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Some rented cars are returned. The return rates follow Poisson distribution. Note that the number of
                 # available cars at each location should not be exceed _max_num_cars_per_loc.
+                np.random.seed(1)
                 n_return_0 = np.random.poisson(self._lambda_return_0)
                 n_return_1 = np.random.poisson(self._lambda_return_1)
                 self._available_cars[0] = min(self._available_cars[0] + n_return_0, self._max_num_cars_per_loc)
                 self._available_cars[1] = min(self._available_cars[1] + n_return_1, self._max_num_cars_per_loc)
-
+                # logger.info("self._available_cars[0] {} - n_moving {}".format(self._available_cars[0], n_moving))
+                # logger.info("self._available_cars[1] {} - n_moving {}".format(self._available_cars[1], n_moving))
                 # Moves cars from the source location to the destination location. Note that the number of available
                 # cars at each location should not be exceed _max_num_cars_per_loc.
                 self._available_cars[src] = max(self._available_cars[src] - n_moving, 0)
@@ -136,6 +140,8 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
                 # logger.info("action {} available".format(action))
+                # logger.info("self._available_cars[0] {} - n_moving {}".format(self._available_cars[0], n_moving))
+                # logger.info("self._available_cars[1] {} - n_moving {}".format(self._available_cars[1], n_moving))
 
                 info['returns'] = [n_return_0, n_return_1]  # Note returns in the information dictionary.
 
