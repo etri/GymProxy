@@ -23,7 +23,7 @@ agent = config.build()
 
 # Step 3: Restore the trainer from a checkpoint
 # checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
-checkpoint_path = "C:/ray_results/PPO_2024-06-18_21-38-20/PPO_a4f9b_00000/checkpoint_000008"
+checkpoint_path = "C:/ray_results/PPO_2024-06-19_08-59-33/PPO_cf228_00000/checkpoint_000009"
 
 agent.load_checkpoint(checkpoint_path)
 print("agent:", agent)

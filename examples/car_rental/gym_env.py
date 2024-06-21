@@ -3,6 +3,7 @@
 """Gym-type environment for simulating Jack's car rental example. It is implemented based on the following reference:
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.2: Jack's Car Rental).
 """
+from typing import Optional
 
 import gymnasium as gym
 import numpy as np
@@ -15,32 +16,32 @@ from gymproxy import BaseEnv
 class CarRental(BaseEnv):
     """Class defining observation and action spaces of gym-type CarRental environment.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, config: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments.
         """
         BaseEnv.actual_env_class = CarRentalActualEnv
-        super().__init__(**kwargs)
+        super().__init__(config)
 
     @staticmethod
-    def build_obs_space(**kwargs) -> gym.Space:
+    def build_obs_space(kwargs: Optional[dict] = None) -> gym.Space:
         """Builds observation space.
 
         :param kwargs: Dictionary of keyword arguments.
         :return: Observation space.
         """
-        config = kwargs['config']
-        max_num_cars_per_loc = config['max_num_cars_per_loc']
+        config = kwargs
+        max_num_cars_per_loc = config.get('max_num_cars_per_loc')
         return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int_)
 
     @staticmethod
-    def build_action_space(**kwargs) -> gym.Space:
+    def build_action_space(kwargs: Optional[dict] = None) -> gym.Space:
         """Builds action space.
 
         :param kwargs: Dictionary of keyword arguments.
         :return: Action space.
         """
-        config = kwargs['config']
-        max_num_cars_per_loc = config['max_num_cars_per_loc']
+        config = kwargs
+        max_num_cars_per_loc = config.get('max_num_cars_per_loc')
         return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int_)))

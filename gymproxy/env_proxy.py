@@ -41,7 +41,7 @@ class EnvProxy(ABC):
         self._gym_env_event.clear()
 
         self._config = kwargs
-        print("self._config {}".format(self._config))
+        # print("self._config {}".format(self._config))
         kwargs['env_proxy'] = self      # Adds self-reference to kwargs
 
         # Prepares the function objects for handling the actual environment.

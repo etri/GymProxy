@@ -27,7 +27,7 @@ RENTAL_RATE_1 = 3
 RETURN_RATE_0 = 3
 RETURN_RATE_1 = 2
 
-NUM_EPISODES = 1
+NUM_EPISODES = 10
 
 
 def main():
@@ -43,12 +43,13 @@ def main():
               'return_rate_1': RETURN_RATE_1}
 
     env = gym.make(id='CarRental-v0', config=config)
-    print("env:", env)
+    # print("env:", env)
     for i in range(0, NUM_EPISODES):
         j = 0
-        print("before obs, info")
-        obs, info = env.reset(seed=147, options={})
-        print("obs, info:", obs,info)
+        # print("before obs, info")
+        obs, info = env.reset(seed=i, options={})
+        # log_step(i, j, obs, 0, False, info, (0, np.array([0])))
+        # print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))
         while True:
             env.render()
@@ -60,9 +61,11 @@ def main():
             log_step(i, j, obs, reward, terminated, info, action)
             j = j + 1
             if terminated:
+                env.close()
+                logger.info("\n")
                 break
 
-    env.close()
+    logger.info("end of simulation...")
 
 
 def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool, info: dict, action: tuple):

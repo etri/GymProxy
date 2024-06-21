@@ -6,6 +6,8 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 """
 
 import logging
+from typing import Optional
+
 import numpy as np
 
 from gymproxy import BaseActualEnv, TerminateGymProxy
@@ -17,7 +19,7 @@ class CarRentalActualEnv(BaseActualEnv):
     """External environment class that actually simulates Jack's car rental.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments. It should have 'config' argument that is a dictionary for
@@ -31,22 +33,22 @@ class CarRentalActualEnv(BaseActualEnv):
             return_rate_0 (int): Mean arrival rate of return at the location 0 for each time-steps.
             return_rate_1 (int): Mean arrival rate of return at the location 1 for each time-steps.
         """
-        env_proxy = kwargs['env_proxy']
+        env_proxy = kwargs.get('env_proxy')
         BaseActualEnv.__init__(self, env_proxy)
-        config = kwargs['config']
-        self._num_steps = config['num_steps']
-        self._max_num_cars_per_loc = config['max_num_cars_per_loc']
-        self._rental_credit = config['rental_credit']
-        self._car_moving_cost = config['car_moving_cost']
-        self._lambda_rental_0 = config['rental_rate_0']
-        self._lambda_rental_1 = config['rental_rate_1']
-        self._lambda_return_0 = config['return_rate_0']
-        self._lambda_return_1 = config['return_rate_1']
+        config = kwargs.get('config')
+        self._num_steps = kwargs['num_steps']
+        self._max_num_cars_per_loc = kwargs['max_num_cars_per_loc']
+        self._rental_credit = kwargs['rental_credit']
+        self._car_moving_cost = kwargs['car_moving_cost']
+        self._lambda_rental_0 = kwargs['rental_rate_0']
+        self._lambda_rental_1 = kwargs['rental_rate_1']
+        self._lambda_return_0 = kwargs['return_rate_0']
+        self._lambda_return_1 = kwargs['return_rate_1']
         self._available_cars = [self._max_num_cars_per_loc] * 2
         self._reward = 0.
         self._t = 0
 
-    def run(self, seed_:int, **kwargs):
+    def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs Jack's car rental environment.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -57,6 +59,10 @@ class CarRentalActualEnv(BaseActualEnv):
             truncated = False
             info = {}
             np.random.seed(seed_)
+            self._reward = 0.
+            self._t = 0
+            self._available_cars = [self._max_num_cars_per_loc] * 2
+
             while self._t < self._num_steps and not terminated:
                 msg = None
 
@@ -85,8 +91,8 @@ class CarRentalActualEnv(BaseActualEnv):
                     msg += '.'
 
 
-                logger.info("***** obs: {}".format(obs))
-                logger.info("..... self._available_cars0: {} self._available_cars1 {}".format(self._available_cars[0], self._available_cars[1]))
+                # logger.info("***** obs: {}".format(obs))
+                # logger.info("..... self._available_cars0: {} self._available_cars1 {}".format(self._available_cars[0], self._available_cars[1]))
                 # Rents cars for requests at each location.
                 self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
                 self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
@@ -95,7 +101,7 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 obs = np.array(self._available_cars, dtype=np.int32)
 
-                logger.info("----- obs: {}".format(obs))
+                # logger.info("----- obs: {}".format(obs))
 
                 # A number of notes in the information dictionary.
                 info['rental_requests'] = [n_req_0, n_req_1]
@@ -110,8 +116,8 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Action consists of source location, from which cars should be moved, and number of cars to be moved.
                 action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
-                print("action:", action)
-                print("type:", type(action))
+                # print("action:", action)
+                # print("type:", type(action))
                 src = action[0]
                 dst = 1 - src
                 n_moving = action[1].item()
@@ -128,8 +134,8 @@ class CarRentalActualEnv(BaseActualEnv):
                 self._available_cars[src] = max(self._available_cars[src] - n_moving, 0)
                 self._available_cars[dst] = min(self._available_cars[dst] + n_moving, self._max_num_cars_per_loc)
 
-                logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
-                logger.info("action {} available".format(action))
+                # logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
+                # logger.info("action {} available".format(action))
 
                 info['returns'] = [n_return_0, n_return_1]  # Note returns in the information dictionary.
 
@@ -153,10 +159,10 @@ class CarRentalActualEnv(BaseActualEnv):
             BaseActualEnv.env_proxy.set_gym_env_event()
             exit(1)
 
-    def finish(self, **kwargs):
+    def finish(self, kwargs: Optional[dict] = None):
         """Finishes Jack's car rental environment.
 
         :param kwargs: Dictionary of keyword arguments.
         """
-        print("finish")
+        logger.info("finish")
         return

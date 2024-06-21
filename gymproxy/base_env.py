@@ -87,14 +87,14 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
         """
         self._env_proxy.close_actual_env()
 
-    @staticmethod
-    @abstractmethod
-    def update_action_space(self, obs: int):
-        """Builds action space.
-
-        :param kwargs: Dictionary of keyword arguments for building action space.
-        """
-        raise NotImplementedError
+    # @staticmethod
+    # @abstractmethod
+    # def update_action_space(self, obs: int):
+    #     """Builds action space.
+    #
+    #     :param kwargs: Dictionary of keyword arguments for building action space.
+    #     """
+    #     raise NotImplementedError
 
     @staticmethod
     def init_actual_env(kwargs: Optional[dict] = None) -> object:
