@@ -44,5 +44,5 @@ class CarRental(BaseEnv):
         """
         config = kwargs
         # max_num_cars_per_loc = config.get('max_num_cars_per_loc')
-        max_num_cars_per_loc = 5
-        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_per_loc, shape=(1,), dtype=np.int_)))
+        max_num_cars_for_move = 5
+        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_for_move, shape=(1,), dtype=np.int_)))

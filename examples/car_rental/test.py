@@ -51,14 +51,16 @@ def main():
         # log_step(i, j, obs, 0, False, info, (0, np.array([0])))
         # print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))
+        my_reward = 0
         while True:
             env.render()
-            env.action_space.seed(1) # to reproduce errors to debug
+            # env.action_space.seed(1) # to reproduce errors to debug
             action = env.action_space.sample()  # Means random agent.
             # ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))
             # action = ready.sample()
             # logger.info("-----* action: {}", action)
             obs, reward, terminated, truncated, info = env.step(action)
+            my_reward += reward
             log_step(i, j, obs, reward, terminated, info, action)
             j = j + 1
             if terminated:
@@ -66,6 +68,7 @@ def main():
                 logger.info("\n")
                 break
 
+    logger.info("my reward is {}".format(my_reward))
     logger.info("end of simulation...")
 
 
@@ -80,12 +83,23 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool
     :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
     :param action: An action provided by the agent.
     """
-    available_cars_0 = obs[0].item()
-    available_cars_1 = obs[1].item()
+    available_cars = [MAX_NUM_CARS_PER_LOC] * 2
+
+    available_cars[0] = obs[0].item()
+    available_cars[1] = obs[1].item()
+
+    src = action[0]
+    dst = 1 - src
+    n_moving = action[1].item()
+
+    available_cars[src] = max(available_cars[src] - n_moving, 0)
+    available_cars[dst] = min(available_cars[dst] + n_moving, MAX_NUM_CARS_PER_LOC)
+
+
     source_loc = action[0]
     n_moving = action[1].item()
     step_str = '{}-th step in {}-th episode / '.format(step, episode)
-    obs_str = 'obs: {} / '.format((available_cars_0, available_cars_1))
+    obs_str = 'obs: {} / '.format((available_cars[0], available_cars[1]))
     reward_str = 'reward: {} / '.format(reward)
     done_str = 'done: {} / '.format(done)
     info_str = 'info: {} / '.format(info)

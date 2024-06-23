@@ -1,3 +1,4 @@
+# Author: Sae Hyong Park <labry@etri.re.kr>
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """External environment for actually simulating Jack's car rental example. It is implemented based on the following
@@ -64,6 +65,12 @@ class CarRentalActualEnv(BaseActualEnv):
             self._available_cars = [self._max_num_cars_per_loc] * 2
 
             while self._t < self._num_steps and not terminated:
+
+                if self._t != 0:
+                    action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
+                else:
+                    action = (0, np.array([0]))
+
                 msg = None
 
                 # New rental requests arrive at two locations for car rental. The arrival rates follow Poisson
@@ -73,14 +80,16 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Identifies the number of possible rentals and reward.
                 n_rentals = min(self._available_cars[0], n_req_0) + min(self._available_cars[1], n_req_1)
-                self._reward = n_rentals * self._rental_credit
+                self._reward = n_rentals * self._rental_credit * 0.005
 
                 # Checks if there is out of car for the two locations
                 if self._available_cars[0] < n_req_0:
                     msg = 'The business is lost because no available car at location 0'
+                    self._reward = 0
                     terminated = True
                     truncated = True
                 if self._available_cars[1] < n_req_1:
+                    self._reward = 0
                     if terminated:
                         msg += ' and location 1'
                     else:
@@ -114,7 +123,7 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Some rented cars are returned. The return rates follow Poisson distribution. Note that the number of
                 # available cars at each location should not be exceed _max_num_cars_per_loc.
-                np.random.seed(1)
+                # np.random.seed(1)
                 n_return_0 = np.random.poisson(self._lambda_return_0)
                 n_return_1 = np.random.poisson(self._lambda_return_1)
                 self._available_cars[0] = min(self._available_cars[0] + n_return_0, self._max_num_cars_per_loc)
@@ -129,7 +138,7 @@ class CarRentalActualEnv(BaseActualEnv):
                 # logger.info("self._available_cars[0] {} - n_moving {}".format(self._available_cars[0], n_moving))
                 # logger.info("self._available_cars[1] {} - n_moving {}".format(self._available_cars[1], n_moving))
                 # Action consists of source location, from which cars should be moved, and number of cars to be moved.
-                action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
+                # where action takes place
                 # print("action:", action)
                 # print("type:", type(action))
                 src = action[0]
@@ -140,6 +149,8 @@ class CarRentalActualEnv(BaseActualEnv):
                 self._available_cars[src] = max(self._available_cars[src] - n_moving, 0)
                 self._available_cars[dst] = min(self._available_cars[dst] + n_moving, self._max_num_cars_per_loc)
 
+                self._reward = self._reward - (n_moving * 0.005 * 2)
+                # logger.info("Reward: {} n_moving {}".format(self._reward, n_moving))
                 # logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
                 # logger.info("action {} available".format(action))
                 # logger.info("self._available_cars[0] {} - n_moving {}".format(self._available_cars[0], n_moving))
