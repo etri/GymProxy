@@ -27,7 +27,7 @@ RENTAL_RATE_1 = 3
 RETURN_RATE_0 = 3
 RETURN_RATE_1 = 2
 
-NUM_EPISODES = 1
+NUM_EPISODES = 100
 
 
 def main():
@@ -44,6 +44,7 @@ def main():
 
     env = gym.make(id='CarRental-v0', config=config)
     # print("env:", env)
+    my_reward = 0
     for i in range(0, NUM_EPISODES):
         j = 0
         # print("before obs, info")
@@ -51,7 +52,7 @@ def main():
         # log_step(i, j, obs, 0, False, info, (0, np.array([0])))
         # print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))
-        my_reward = 0
+
         while True:
             env.render()
             # env.action_space.seed(1) # to reproduce errors to debug
