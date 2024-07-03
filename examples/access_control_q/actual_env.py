@@ -7,6 +7,8 @@ Queuing Task).
 """
 
 import logging
+from typing import Optional
+
 import numpy as np
 import random
 
@@ -19,7 +21,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
     """External environment class that actually simulates the access-control queuing task.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments. It should have 'config' argument that is a dictionary for
@@ -31,20 +33,27 @@ class AccessControlQueueActualEnv(BaseActualEnv):
         """
         env_proxy = kwargs['env_proxy']
         BaseActualEnv.__init__(self, env_proxy)
-        config = kwargs['config']
-        self._num_steps = config['num_steps']
-        self._server_states = ['free'] * config['num_servers']
-        self._server_free_probability = config['server_free_probability']
-        self._priorities = config['priorities']
+        config = kwargs.get('config')
+        self._num_steps = kwargs['num_steps']
+        self._server_states = ['free'] * kwargs['num_servers']
+        self._server_free_probability = kwargs['server_free_probability']
+        self._priorities = kwargs['priorities']
         self._reward = 0.
         self._t = 0
 
-    def run(self, seed_:int, **kwargs):
+    def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs the access-control queuing task environment.
 
         :param kwargs: Dictionary of keyword arguments.
         """
         try:
+            obs = None
+            terminated = False
+            truncated = False
+            info = {}
+            np.random.seed(seed_)
+            self._reward = 0.
+            self._t = 0
             while self._t < self._num_steps:
 
                 # Assumes that a new customer arrives. Chooses new customer's priority from the list of candidate
@@ -109,9 +118,10 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             BaseActualEnv.env_proxy.set_gym_env_event()
             exit(1)
 
-    def finish(self, **kwargs):
+    def finish(self, kwargs: Optional[dict] = None):
         """Finishes access-control queuing task environment.
 
         :param kwargs: Dictionary of keyword arguments.
         """
+        logger.info("finish")
         return

@@ -5,6 +5,7 @@ the following reference:
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 10.2: An Access-Control
 Queuing Task).
 """
+from typing import Optional
 
 import gymnasium as gym
 import numpy as np
@@ -17,16 +18,16 @@ from gymproxy import BaseEnv
 class AccessControlQueue(BaseEnv):
     """Class defining observation and action spaces of gym-type AccessControlQueue environment.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, config: Optional[dict] = None):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments.
         """
         BaseEnv.actual_env_class = AccessControlQueueActualEnv
-        super().__init__(**kwargs)
+        super().__init__(config)
 
     @staticmethod
-    def build_obs_space(**kwargs) -> gym.Space:
+    def build_obs_space(kwargs: Optional[dict] = None) -> gym.Space:
         """Builds observation space.
 
         :param kwargs: Dictionary of keyword arguments.
@@ -35,7 +36,7 @@ class AccessControlQueue(BaseEnv):
         return Box(low=0, high=np.inf, shape=(2,), dtype=np.int32)
 
     @staticmethod
-    def build_action_space(**kwargs) -> gym.Space:
+    def build_action_space(kwargs: Optional[dict] = None) -> gym.Space:
         """Builds action space.
 
         :param kwargs: Dictionary of keyword arguments.
