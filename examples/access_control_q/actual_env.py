@@ -81,7 +81,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
                         i = free_servers[random.randrange(0, len(free_servers))]
                         self._server_states[i] = 'busy'     # Selected server becomes busy.
 
-                        self._reward = priority     # Reward is the priority of accepted customer.
+                        self._reward = priority* 0.005     # Reward is the priority of accepted customer.
                     else:   # Means rejection.
                         self._reward = 0.
                 else:   # Rejects the customer if the number of free servers is 0.
