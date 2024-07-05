@@ -63,6 +63,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--off-policy",
+    default=False,
     action="store_true",
     help="Whether to compute random actions instead of on-policy "
          "(Policy-computed) ones.",
@@ -101,12 +102,15 @@ if __name__ == "__main__":
     while True:
         # Compute an action randomly (off-policy) and log it.
         if args.off_policy:
+            print("off policy")
             action = np.random.randint(1, env._s + 1)
             client.log_action(eid, obs, action)
         # Compute an action locally or remotely (on server).
         # No need to log it here as the action
         else:
+            print("on policy")
             action = client.get_action(eid, obs)
+            print("action:", action)
 
         # Perform a step in the external simulator (env).
         obs, reward, terminated, info = env.step(action)
