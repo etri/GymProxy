@@ -115,7 +115,7 @@ class CarRentalSimulator:
             # action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
             ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))
             action = ready.sample()
-            print("action:", action)
+            # print("action:", action)
             src = action[0]
             dst = 1 - src
             n_moving = action[1].item()

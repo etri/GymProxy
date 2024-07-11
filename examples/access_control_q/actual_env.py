@@ -104,9 +104,10 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             truncated = True
             #info = {}
             AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
-
+            print("self._t: {}".format(self._t))
         # Exception handling block.
         except TerminateGymProxy:
+
             # Means termination signal triggered by the agent.
             logger.info('Terminating AccessControlQueue environment.')
             BaseActualEnv.env_proxy.release_lock()

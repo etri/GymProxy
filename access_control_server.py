@@ -76,7 +76,7 @@ def get_cli_args():
         "--run=[IMPALA|PPO|R2D2]",
     )
     parser.add_argument(
-        "--stop-iters", type=int, default=10, help="Number of iterations to train."
+        "--stop-iters", type=int, default=1, help="Number of iterations to train."
     )
     parser.add_argument(
         "--stop-timesteps",
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         # Example of using PPO (does NOT support off-policy actions).
         config.update_from_dict(
             {
-                "rollout_fragment_length": 1000,
+                "rollout_fragment_length": 2000,
                 "train_batch_size": 4000,
                 "model": {"use_lstm": args.use_lstm},
             }

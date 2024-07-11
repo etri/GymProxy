@@ -27,7 +27,7 @@ tune.run("PPO",
                   'priorities': PRIORITIES
                     },
                  "num_workers":0,
-                 "evaluation_interval": 100,
+                 "evaluation_interval": 1,
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
                  "evaluation_duration_unit": 1000,
                  "normalize_actions": False,
@@ -38,4 +38,5 @@ tune.run("PPO",
          checkpoint_freq=10,
          local_dir="C:/ray_results",
          trial_dirname_creator=trial_name_creator,
+         stop={"training_iteration":1},
          )

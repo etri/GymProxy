@@ -22,7 +22,8 @@ agent = config.build()
 
 # Step 3: Restore the trainer from a checkpoint
 # checkpoint_path ="C:/Users/labry/ray_results/PPO_2024-06-12_17-16-10/PPO_GamblersProblem-v0_067f9_00000_0_2024-06-12_17-16-10/checkpoint_000001"
-checkpoint_path = "C:/ray_results/PPO_2024-07-04_13-40-38/PPO_8f7d0_00000/checkpoint_000009"
+# checkpoint_path = "C:/ray_results/PPO_2024-07-04_13-40-38/PPO_8f7d0_00000/checkpoint_000009"
+checkpoint_path = "C:/Users/ADMIN/ray_results/PPO_2024-07-05_20-25-04/PPO_None_39cc3_00000_0_2024-07-05_20-25-04/checkpoint_000000"
 
 agent.load_checkpoint(checkpoint_path)
 # print("agent:", agent)
@@ -67,7 +68,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool
 env = gym.make("AccessControlQueue-v0")
 
 total_reward = 0
-NUM_EPISODES = 1
+NUM_EPISODES = 100
 
 for i in range(0, NUM_EPISODES):
     obs, info = env.reset(seed=i)
@@ -83,10 +84,10 @@ for i in range(0, NUM_EPISODES):
         # if reward < 0:
         #     reward = 0
         total_reward += reward
-        log_step(i, 1, obs, reward *200, terminated, info, action)
+        log_step(i, 1, obs, reward, terminated, info, action)
         env.render()
         if terminated:
             break
     env.close()
 
-logger.info("total reward: {}".format(total_reward*200))
+logger.info("total reward: {}".format(total_reward))
