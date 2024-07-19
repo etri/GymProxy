@@ -44,7 +44,7 @@ tune.run("PPO",
                  #     "options": tune.grid_search(options)  # Add reset options dict
                  # },
                  "num_workers":0,
-                 "evaluation_interval": 100,
+                 "evaluation_interval": 20,
                  # Each episode uses different shop params. Need lots of samples to gauge agent's performance
                  "evaluation_duration_unit": 1000,
                  "normalize_actions": False,
@@ -52,7 +52,7 @@ tune.run("PPO",
                  #"clip_actions": True,
                  },
          # keep_checkpoints_num=100,
-         checkpoint_freq=10,
+         checkpoint_freq=20,
          local_dir="C:/ray_results",
          trial_dirname_creator=trial_name_creator,
          )

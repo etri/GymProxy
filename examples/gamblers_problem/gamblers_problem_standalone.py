@@ -49,11 +49,15 @@ class GamblersProblemSimulator:
         while self._t < self._num_steps:
             obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
             # bet = max(np.random.randint(0, self._s), 1)
-            logger.info(obs)
-            bet = min(obs.item(), self._s_win - self._s)
+            # logger.info(obs)
+            # bet = min(obs.item(), self._s_win - self._s)
+            bet = np.random.rand()
+            raw_action = np.array(max(round(bet * self._s), 1))
+            bet = min(raw_action, self._s, self._s_win - self._s)
 
-            init_str = 'init obs: {} '.format(self._s)
-            logger.info(init_str)
+            if self._t == 0:
+                init_str = 'init obs: {} '.format(self._s)
+                logger.info(init_str)
             flip_result = None
 
             # Flips the coin
@@ -72,11 +76,12 @@ class GamblersProblemSimulator:
             # Checks if the gambler wins or not.
             if self._s >= self._s_win:
                 msg = 'Wins the game because the capital becomes over {} dollars. action is {}'.format(self._s, bet)
-                self._reward = 1.
+                self._reward = 2.
                 terminated = True
             elif self._s <= 0:
                 msg = 'Loses the game due to out of money.'
                 terminated = True
+                self._reward = -0.5
 
             step_str = '{}-th step / '.format(self._t)
             obs_str = 'obs: {} / '.format(self._s)
@@ -87,6 +92,8 @@ class GamblersProblemSimulator:
             logger.info(result_str)
 
             if terminated:
+                if self._reward == 0:
+                    self._reward = -1.
                 logger.info(msg)
                 break
 
@@ -94,10 +101,10 @@ class GamblersProblemSimulator:
 
 
 NUM_STEPS = 100
-PROB_HEAD = 0.5
+PROB_HEAD = 0.6
 INITIAL_CAPITAL = 10
 WINNING_CAPITAL = 100
-SEED = 126
+SEED = 1
 
 
 def main():
