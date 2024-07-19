@@ -66,14 +66,14 @@ class AccessControlSimulator:
         terminated = self._t >= self._num_steps
 
         if terminated:
-            self._reward = 0xabc
+            #self._reward = 0xabc
             print("self._t {} terminated".format(self._t))
             self.cnt = self.cnt +1
             print("counter: {}".format(self.cnt))
-            if(self.cnt == 40):
-                end = time.time()
-                print("end time: {}".format(end-start))
-                exit(0)
+            # if(self.cnt == 40*10):
+            #     end = time.time()
+            #     print("end time: {}".format(end-start))
+            #     exit(0)
             self._t = 0
             free_servers = list(filter(lambda i_: self._server_states[i_] == 'free', range(len(self._server_states))))
             obs = np.array([0, len(free_servers)], dtype=np.int32)
@@ -105,7 +105,7 @@ parser.add_argument(
 )
 
 if __name__ == "__main__":
-    start = time.time()
+    # start = time.time()
     args = parser.parse_args()
 
     # Initialize the Access Control Queue simulator

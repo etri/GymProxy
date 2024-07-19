@@ -27,7 +27,7 @@ RENTAL_RATE_1 = 3
 RETURN_RATE_0 = 3
 RETURN_RATE_1 = 2
 
-NUM_EPISODES = 100
+NUM_EPISODES = 1
 
 
 def main():
@@ -48,7 +48,7 @@ def main():
     for i in range(0, NUM_EPISODES):
         j = 0
         # print("before obs, info")
-        obs, info = env.reset(seed=i, options={})
+        obs, info = env.reset(seed=147, options={})
         # log_step(i, j, obs, 0, False, info, (0, np.array([0])))
         # print("obs, info:", obs,info)
         logger.info(str(obs)+ str(info))

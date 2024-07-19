@@ -47,7 +47,7 @@ tune.run("PPO",
                  #"clip_actions": True,
                  },
          # keep_checkpoints_num=100,
-         checkpoint_freq=10,
+         checkpoint_freq=20,
          local_dir="C:/ray_results",
          trial_dirname_creator=trial_name_creator,
          )

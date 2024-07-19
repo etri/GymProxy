@@ -25,10 +25,6 @@ def get_cli_args():
     """Create CLI parser and return parsed arguments"""
     parser = argparse.ArgumentParser()
 
-    # parser.add_argument(
-    #     "--stop-iters", type=int, default=10, help="Number of iterations to train."
-    # )
-    # Example-specific args.
     parser.add_argument(
         "--port",
         type=int,
@@ -55,7 +51,6 @@ def get_cli_args():
         "which is saved in `last_checkpoint_[algo-name].out`).",
     )
 
-    # General args.
     parser.add_argument(
         "--run",
         default="PPO",
@@ -116,58 +111,34 @@ if __name__ == "__main__":
     args = get_cli_args()
     ray.init(local_mode=args.local_mode)
 
-    # `InputReader` generator (returns None if no input reader is needed on
-    # the respective worker).
     def _input(ioctx):
-        # We are remote worker or we are local worker with num_env_runners=0:
-        # Create a PolicyServerInput.
         if ioctx.worker_index > 0 or ioctx.worker.num_workers == 0:
             return PolicyServerInput(
                 ioctx,
                 SERVER_ADDRESS,
                 args.port + ioctx.worker_index - (1 if ioctx.worker_index > 0 else 0),
             )
-        # No InputReader (PolicyServerInput) needed.
         else:
             return None
 
-    # Algorithm config. Note that this config is sent to the client only in case
-    # the client needs to create its own policy copy for local inference.
     config = (
         get_trainable_cls(args.run).get_default_config()
-        # Indicate that the Algorithm we setup here doesn't need an actual env.
-        # Allow spaces to be determined by user (see below).
         .environment(
             env=None,
-            # Define observation and action spaces for the Access Control Queue
-            observation_space=gymnasium.spaces.Box(0, np.inf, shape=(2,), dtype=np.int32),
-            action_space=gymnasium.spaces.Discrete(2),  # Accept (1) or Reject (0) customer
+            observation_space=gymnasium.spaces.Box(0, 20, shape=(2,), dtype=np.int_),
+            action_space=gymnasium.spaces.Tuple((gymnasium.spaces.Discrete(2), gymnasium.spaces.Box(0, 5, shape=(1,), dtype=np.int_))),
         )
-        # DL framework to use.
         .framework(args.framework)
-        # Create a "chatty" client/server or not.
-        # .callbacks(MyCallbacks if args.callbacks_verbose else None)
-        # Use the `PolicyServerInput` to generate experiences.
         .offline_data(input_=_input)
-        # Use n worker processes to listen on different ports.
         .env_runners(
             num_env_runners=args.num_workers,
-            # Connectors are not compatible with the external env.
             enable_connectors=False,
         )
-        # Disable OPE, since the rollouts are coming from online clients.
         .evaluation(off_policy_estimation_methods={})
-        # Set to INFO so we'll see the server's actual address:port.
         .debugging(log_level="INFO")
     )
-    # Disable RLModules because they need connectors
-    # TODO (Sven): Deprecate ExternalEnv (via EnvRunner path) and reenable connectors
-    #  and RL Modules here.
-    # config.api_stack(enable_rl_module_and_learner=False)
 
-    # PPO.
     if args.run == "PPO":
-        # Example of using PPO (does NOT support off-policy actions).
         config.update_from_dict(
             {
                 "rollout_fragment_length": 1000,
@@ -177,13 +148,11 @@ if __name__ == "__main__":
         )
 
     checkpoint_path = CHECKPOINT_FILE.format(args.run)
-    # Attempt to restore from checkpoint, if possible.
     if not args.no_restore and os.path.exists(checkpoint_path):
         checkpoint_path = open(checkpoint_path).read()
     else:
         checkpoint_path = None
 
-    # Manual training loop (no Ray tune).
     if args.no_tune:
         algo = config.build()
 
@@ -191,7 +160,6 @@ if __name__ == "__main__":
             print("Restoring from checkpoint path", checkpoint_path)
             algo.restore(checkpoint_path)
 
-        # Serving and training loop.
         ts = 0
         print("stop_iters =", args.stop_iters)
         for _ in range(args.stop_iters):
@@ -210,7 +178,6 @@ if __name__ == "__main__":
 
         algo.stop()
 
-    # Run with Tune for auto env and algo creation and TensorBoard.
     else:
         print("Ignoring restore even if previous checkpoint is provided...")
         print("args.stop_iters =", args.stop_iters)
