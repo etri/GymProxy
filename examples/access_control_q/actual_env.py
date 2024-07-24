@@ -40,6 +40,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
         self._priorities = kwargs['priorities']
         self._reward = 0.
         self._t = 0
+        # self._cnt = 0
 
     def run(self, seed_:int, kwargs: Optional[dict] = None):
         """Runs the access-control queuing task environment.
@@ -95,6 +96,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
                         self._server_states[i] = 'free'
 
                 self._t += 1
+                # self._cnt += 1
 
             # Arrives to the end of the episode (terminal state).
             free_servers = list(filter(lambda i_:
@@ -104,7 +106,8 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             truncated = True
             #info = {}
             AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
-            #print("self._t: {}".format(self._t))
+            # logger.info("self._cnt: {}".format(self._cnt))
+            # print("self._cnt: {}".format(self._cnt))
         # Exception handling block.
         except TerminateGymProxy:
 

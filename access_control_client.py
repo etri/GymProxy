@@ -83,7 +83,7 @@ class AccessControlSimulator:
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--no-train", action="store_true", help="Whether to disable training."
+    "--no-train", default= False, action="store_true", help="Whether to disable training."
 )
 parser.add_argument(
     "--inference-mode", type=str, default="local", choices=["local", "remote"]
@@ -97,7 +97,7 @@ parser.add_argument(
 parser.add_argument(
     "--stop-reward",
     type=float,
-    default=9999,
+    default=99999,
     help="Stop once the specified reward is reached.",
 )
 parser.add_argument(

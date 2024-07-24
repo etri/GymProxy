@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import time
 
 import gymnasium
 import numpy as np
@@ -62,7 +63,7 @@ def get_cli_args():
         choices=["PPO"],
         help="The RLlib-registered algorithm to use.",
     )
-    parser.add_argument("--num-cpus", type=int, default=3)
+    parser.add_argument("--num-cpus", type=int, default=1)
     parser.add_argument(
         "--framework",
         choices=["torch"],
@@ -76,28 +77,30 @@ def get_cli_args():
         "--run=[IMPALA|PPO|R2D2]",
     )
     parser.add_argument(
-        "--stop-iters", type=int, default=20, help="Number of iterations to train."
+        "--stop-iters", type=int, default=25, help="Number of iterations to train."
     )
     parser.add_argument(
         "--stop-timesteps",
         type=int,
-        default=500000,
+        default=5000000,
         help="Number of timesteps to train.",
     )
     parser.add_argument(
         "--stop-reward",
         type=float,
-        default=80.0,
+        default=80000.0,
         help="Reward at which we stop training.",
     )
     parser.add_argument(
         "--as-test",
+        default=False,
         action="store_true",
         help="Whether this script should be run as a test: --stop-reward must "
         "be achieved within --stop-timesteps AND --stop-iters.",
     )
     parser.add_argument(
         "--no-tune",
+        default=True,
         action="store_true",
         help="Run without Tune using a manual train loop instead. Here,"
         "there is no TensorBoard support.",
@@ -170,9 +173,9 @@ if __name__ == "__main__":
         # Example of using PPO (does NOT support off-policy actions).
         config.update_from_dict(
             {
-                "rollout_fragment_length": 1000,
-                "train_batch_size": 4000,
-                "model": {"use_lstm": args.use_lstm},
+                # "rollout_fragment_length": 4096,
+                "train_batch_size": 8192,
+                # "model": {"use_lstm": args.use_lstm},
             }
         )
 
@@ -193,17 +196,23 @@ if __name__ == "__main__":
 
         # Serving and training loop.
         ts = 0
+        iteration = 0
         print("stop_iters =", args.stop_iters)
         for _ in range(args.stop_iters):
+            start_time = time.time()
             results = algo.train()
-            print(pretty_print(results))
-            checkpoint = algo.save().checkpoint
-            print("Last checkpoint", checkpoint)
-            with open(checkpoint_path, "w") as f:
-                f.write(checkpoint.path)
+            end_time = time.time()
+            duration = end_time - start_time
+            print("(Duration: {:.2f} seconds Training iteration {} )".format(duration, iteration))
+            iteration+=1
+            #print(pretty_print(results))
+            #checkpoint = algo.save().checkpoint
+            #print("Last checkpoint", checkpoint)
+            #with open(checkpoint_path, "w") as f:
+            #    f.write(checkpoint.path)
             if (
-                results["episode_reward_mean"] >= args.stop_reward
-                or ts >= args.stop_timesteps
+                #results["episode_reward_mean"] >= args.stop_reward or
+                ts >= args.stop_timesteps
             ):
                 break
             ts += results[NUM_ENV_STEPS_SAMPLED]
