@@ -72,6 +72,7 @@ def get_cli_args():
     )
     parser.add_argument(
         "--use-lstm",
+        default=False,
         action="store_true",
         help="Whether to auto-wrap the model with an LSTM. Only valid option for "
         "--run=[IMPALA|PPO|R2D2]",
@@ -174,8 +175,8 @@ if __name__ == "__main__":
         config.update_from_dict(
             {
                 # "rollout_fragment_length": 4096,
-                "train_batch_size": 8192,
-                # "model": {"use_lstm": args.use_lstm},
+                "train_batch_size": 4096,
+                "model": {"use_lstm": args.use_lstm},
             }
         )
 

@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import time
 
 import gymnasium
 import numpy as np
@@ -57,7 +58,7 @@ def get_cli_args():
         choices=["PPO"],
         help="The RLlib-registered algorithm to use.",
     )
-    parser.add_argument("--num-cpus", type=int, default=3)
+    parser.add_argument("--num-cpus", type=int, default=1)
     parser.add_argument(
         "--framework",
         choices=["torch"],
@@ -66,6 +67,7 @@ def get_cli_args():
     )
     parser.add_argument(
         "--use-lstm",
+        default=False,
         action="store_true",
         help="Whether to auto-wrap the model with an LSTM. Only valid option for "
         "--run=[IMPALA|PPO|R2D2]",
@@ -82,7 +84,7 @@ def get_cli_args():
     parser.add_argument(
         "--stop-reward",
         type=float,
-        default=80.0,
+        default=80000.0,
         help="Reward at which we stop training.",
     )
     parser.add_argument(
@@ -93,6 +95,7 @@ def get_cli_args():
     )
     parser.add_argument(
         "--no-tune",
+        default=True,
         action="store_true",
         help="Run without Tune using a manual train loop instead. Here,"
         "there is no TensorBoard support.",
@@ -141,8 +144,8 @@ if __name__ == "__main__":
     if args.run == "PPO":
         config.update_from_dict(
             {
-                "rollout_fragment_length": 1000,
-                "train_batch_size": 4000,
+                # "rollout_fragment_length": 8192,
+                "train_batch_size": 128,
                 "model": {"use_lstm": args.use_lstm},
             }
         )
@@ -161,17 +164,23 @@ if __name__ == "__main__":
             algo.restore(checkpoint_path)
 
         ts = 0
+        iteration = 0
         print("stop_iters =", args.stop_iters)
         for _ in range(args.stop_iters):
+            start_time = time.time()
             results = algo.train()
-            print(pretty_print(results))
-            checkpoint = algo.save().checkpoint
-            print("Last checkpoint", checkpoint)
-            with open(checkpoint_path, "w") as f:
-                f.write(checkpoint.path)
+            end_time = time.time()
+            duration = end_time - start_time
+            print("(Duration: {:.2f} seconds Training iteration {} )".format(duration, iteration))
+            iteration+=1
+            # print(pretty_print(results))
+            # checkpoint = algo.save().checkpoint
+            # print("Last checkpoint", checkpoint)
+            # with open(checkpoint_path, "w") as f:
+            #     f.write(checkpoint.path)
             if (
-                results["episode_reward_mean"] >= args.stop_reward
-                or ts >= args.stop_timesteps
+                # results["episode_reward_mean"] >= args.stop_reward or
+                ts >= args.stop_timesteps
             ):
                 break
             ts += results[NUM_ENV_STEPS_SAMPLED]

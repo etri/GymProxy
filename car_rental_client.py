@@ -91,7 +91,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--no-train", action="store_true", help="Whether to disable training.")
 parser.add_argument("--inference-mode", type=str, default="local", choices=["local", "remote"])
 parser.add_argument("--off-policy", default=False, action="store_true", help="Whether to compute random actions instead of on-policy (Policy-computed) ones.")
-parser.add_argument("--stop-reward", type=float, default=9999, help="Stop once the specified reward is reached.")
+parser.add_argument("--stop-reward", type=float, default=99999, help="Stop once the specified reward is reached.")
 parser.add_argument("--port", type=int, default=9900, help="The port to use (on localhost).")
 
 if __name__ == "__main__":
