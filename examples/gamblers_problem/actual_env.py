@@ -11,7 +11,7 @@ import random
 import copy
 from typing import Optional
 
-from gymproxy import BaseActualEnv, TerminateGymProxy
+from gymproxy.base_actual_env_cy import BaseActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('gamblers_problem_actual_env')
 

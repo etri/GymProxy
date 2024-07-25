@@ -67,9 +67,9 @@ class AccessControlSimulator:
 
         if terminated:
             #self._reward = 0xabc
-            print("self._t {} terminated".format(self._t))
-            self.cnt = self.cnt +1
-            print("counter: {}".format(self.cnt))
+            # print("self._t {} terminated".format(self._t))
+            # self.cnt = self.cnt +1
+            # print("counter: {}".format(self.cnt))
             # if(self.cnt == 40*10):
             #     end = time.time()
             #     print("end time: {}".format(end-start))

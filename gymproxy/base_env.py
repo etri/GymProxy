@@ -7,10 +7,8 @@ from typing import TypeVar, Optional
 
 import gymnasium
 
-from gymproxy.base_actual_env import BaseActualEnv
-from gymproxy.env_proxy import EnvProxy
-
-import numpy as np
+from gymproxy.base_actual_env_cy import BaseActualEnv
+from gymproxy.env_proxy_cy import EnvProxy
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
@@ -36,9 +34,8 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
         action_space = self.build_action_space(config)
 
         super().__init__()
-
         # Initializes the environment proxy object.
-        self._env_proxy = EnvProxy(self.init_actual_env, self.reset_actual_env, self.close_actual_env, kwargs)
+        self._env_proxy = EnvProxy(self.init_actual_env, self.reset_actual_env, self.close_actual_env, **config)
 
         self.observation_space = obs_space
         self.action_space = action_space
@@ -53,7 +50,9 @@ class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
 
         :return: observation: Agent's observation of the current environment.
         """
-        # self._seed = seed
+        if seed is None:
+            import numpy as np
+            seed = np.random.randint(999)
         # print("seed {}, options {}".format(seed, options))
         self._env_proxy.reset_actual_env(seed, options)  # Resets the actual environment.
         return self._env_proxy.get_obs_and_info()    # Gets observation object from the environment proxy.

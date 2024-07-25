@@ -12,7 +12,7 @@ from typing import Optional
 import numpy as np
 import random
 
-from gymproxy import BaseActualEnv, TerminateGymProxy
+from gymproxy.base_actual_env_cy import BaseActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('access_control_q_actual_env')
 

@@ -175,7 +175,7 @@ if __name__ == "__main__":
         config.update_from_dict(
             {
                 # "rollout_fragment_length": 4096,
-                "train_batch_size": 4096,
+                "train_batch_size": 40000,
                 "model": {"use_lstm": args.use_lstm},
             }
         )
@@ -206,7 +206,7 @@ if __name__ == "__main__":
             duration = end_time - start_time
             print("(Duration: {:.2f} seconds Training iteration {} )".format(duration, iteration))
             iteration+=1
-            #print(pretty_print(results))
+            print(pretty_print(results))
             #checkpoint = algo.save().checkpoint
             #print("Last checkpoint", checkpoint)
             #with open(checkpoint_path, "w") as f:
