@@ -57,7 +57,7 @@ def get_cli_args():
         choices=["PPO"],
         help="The RLlib-registered algorithm to use.",
     )
-    parser.add_argument("--num-cpus", type=int, default=3)
+    parser.add_argument("--num-cpus", type=int, default=1)
     parser.add_argument(
         "--framework",
         choices=["torch"],
@@ -66,23 +66,24 @@ def get_cli_args():
     )
     parser.add_argument(
         "--use-lstm",
+        default=False,
         action="store_true",
         help="Whether to auto-wrap the model with an LSTM. Only valid option for "
         "--run=[IMPALA|PPO|R2D2]",
     )
     parser.add_argument(
-        "--stop-iters", type=int, default=20, help="Number of iterations to train."
+        "--stop-iters", type=int, default=25, help="Number of iterations to train."
     )
     parser.add_argument(
         "--stop-timesteps",
         type=int,
-        default=500000,
+        default=5000000,
         help="Number of timesteps to train.",
     )
     parser.add_argument(
         "--stop-reward",
         type=float,
-        default=200.0,
+        default=200000.0,
         help="Reward at which we stop training.",
     )
     parser.add_argument(
@@ -141,7 +142,7 @@ if __name__ == "__main__":
     if args.run == "PPO":
         config.update_from_dict(
             {
-                "rollout_fragment_length": 1000,
+                # "rollout_fragment_length": 1000,
                 "train_batch_size": 4000,
                 "model": {"use_lstm": args.use_lstm},
             }

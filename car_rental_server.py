@@ -73,18 +73,18 @@ def get_cli_args():
         "--run=[IMPALA|PPO|R2D2]",
     )
     parser.add_argument(
-        "--stop-iters", type=int, default=20, help="Number of iterations to train."
+        "--stop-iters", type=int, default=25, help="Number of iterations to train."
     )
     parser.add_argument(
         "--stop-timesteps",
         type=int,
-        default=500000,
+        default=5000000,
         help="Number of timesteps to train.",
     )
     parser.add_argument(
         "--stop-reward",
         type=float,
-        default=80000.0,
+        default=800000.0,
         help="Reward at which we stop training.",
     )
     parser.add_argument(
