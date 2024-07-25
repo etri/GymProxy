@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import time
 
 import gymnasium
 import numpy as np
@@ -162,17 +163,23 @@ if __name__ == "__main__":
             algo.restore(checkpoint_path)
 
         ts = 0
+        iteration = 0
         print("stop_iters =", args.stop_iters)
         for _ in range(args.stop_iters):
+            start_time = time.time()
             results = algo.train()
-            print(pretty_print(results))
-            checkpoint = algo.save().checkpoint
-            print("Last checkpoint", checkpoint)
-            with open(checkpoint_path, "w") as f:
-                f.write(checkpoint.path)
+            end_time = time.time()
+            duration = end_time - start_time
+            print("(Duration: {:.2f} seconds Training iteration {} )".format(duration, iteration))
+            iteration+=1
+            # print(pretty_print(results))
+            # checkpoint = algo.save().checkpoint
+            # print("Last checkpoint", checkpoint)
+            # with open(checkpoint_path, "w") as f:
+            #     f.write(checkpoint.path)
             if (
-                results["episode_reward_mean"] >= args.stop_reward
-                or ts >= args.stop_timesteps
+                # results["episode_reward_mean"] >= args.stop_reward or
+                ts >= args.stop_timesteps
             ):
                 break
             ts += results[NUM_ENV_STEPS_SAMPLED]
