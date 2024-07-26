@@ -44,6 +44,9 @@ class CarRentalSimulator:
 
     def step(self, action):
         """Performs one step in the environment."""
+        obs = None
+        terminated = False
+        truncated = False
         info = {}
         msg = None
         np.random.seed(self._seed)
@@ -101,7 +104,7 @@ class CarRentalSimulator:
         if self._t >= self._num_steps:
             terminated = True
 
-        return np.array(self._available_cars, dtype=np.int32), self._reward, terminated, info
+        return np.array(self._available_cars, dtype=np.int32), self._reward, terminated, truncated, info
 
 
 REWARD_SCALE = 0.005
@@ -149,7 +152,7 @@ if __name__ == "__main__":
             #action = tuple(action)  # Ensure action is a tuple
 
         #print(action)
-        obs, reward, terminated, info = env.step(action)
+        obs, reward, terminated, truncated, info = env.step(action)
         rewards += reward
         client.log_returns(eid, reward, info=info)
 
