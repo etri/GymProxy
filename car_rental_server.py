@@ -145,7 +145,7 @@ if __name__ == "__main__":
         config.update_from_dict(
             {
                 # "rollout_fragment_length": 8192,
-                "train_batch_size": 128,
+                "train_batch_size": 4000,
                 "model": {"use_lstm": args.use_lstm},
             }
         )

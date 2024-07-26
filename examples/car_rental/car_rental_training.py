@@ -1,12 +1,11 @@
+import logging
 import time
 
+import numpy as np
 from ray.rllib.algorithms.ppo.ppo import PPOConfig
 from ray.tune import register_env
 
 from examples.car_rental import CarRental
-import gymnasium as gym
-import logging
-import numpy as np
 
 # Constants and Configuration
 NUM_STEPS = 100
@@ -39,8 +38,9 @@ config.update_from_dict(
     {
         "callback_verbose": False,
         # "rollout_fragment_length": 1000,
-        "train_batch_size": 128,
+        "train_batch_size": 4000,
         "model": {"use_lstm": False},
+        "seed": 126,
     }
 )
 

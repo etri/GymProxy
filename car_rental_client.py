@@ -30,6 +30,7 @@ class CarRentalSimulator:
         self._available_cars = [self._max_num_cars_per_loc] * 2
         self._reward = 0.
         self._t = 0
+        self._seed = 0
 
     def reset(self, seed=None):
         """Resets the environment."""
@@ -38,10 +39,14 @@ class CarRentalSimulator:
         self._available_cars = [self._max_num_cars_per_loc] * 2
         self._reward = 0.
         self._t = 0
+        self._seed = seed
         return np.array(self._available_cars, dtype=np.float32)
 
     def step(self, action):
         """Performs one step in the environment."""
+        info = {}
+        msg = None
+        np.random.seed(self._seed)
         n_req_0 = np.random.poisson(self._lambda_rental_0)
         n_req_1 = np.random.poisson(self._lambda_rental_1)
         n_rentals = min(self._available_cars[0], n_req_0) + min(self._available_cars[1], n_req_1)
@@ -56,12 +61,34 @@ class CarRentalSimulator:
         self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
         self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
 
+        if self._available_cars[0] < n_req_0:
+            msg = 'The business is lost because no available car at location 0'
+            self._reward = 0
+            terminated = True
+            truncated = True
+        if self._available_cars[1] < n_req_1:
+            self._reward = 0
+            if terminated:
+                msg += ' and location 1'
+            else:
+                msg = 'The business is lost because no available car at location 1'
+                terminated = True
+                truncated = True
+        if terminated:
+            msg += '.'
+
         src, n_moving = action
         dst = 1 - src
         n_moving = min(n_moving.item(), self._available_cars[src])
         #print(n_moving)
         self._available_cars[src] = max(self._available_cars[src] - n_moving, 0)
         self._available_cars[dst] = min(self._available_cars[dst] + n_moving, self._max_num_cars_per_loc)
+
+        info['rental_requests'] = [n_req_0, n_req_1]
+        if msg:
+            info['msg'] = msg
+        elif 'msg' in info.keys():
+            del info['msg']
 
         n_return_0 = np.random.poisson(self._lambda_return_0)
         n_return_1 = np.random.poisson(self._lambda_return_1)
@@ -74,7 +101,7 @@ class CarRentalSimulator:
         if self._t >= self._num_steps:
             terminated = True
 
-        return np.array(self._available_cars, dtype=np.int32), self._reward, terminated, {}
+        return np.array(self._available_cars, dtype=np.int32), self._reward, terminated, info
 
 
 REWARD_SCALE = 0.005

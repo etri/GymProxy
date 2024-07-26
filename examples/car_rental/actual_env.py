@@ -99,16 +99,8 @@ class CarRentalActualEnv(BaseActualEnv):
                 if terminated:
                     msg += '.'
 
-
-                # logger.info("***** obs: {}".format(obs))
-                # logger.info("..... self._available_cars0: {} self._available_cars1 {}".format(self._available_cars[0], self._available_cars[1]))
-                # Rents cars for requests at each location.
                 self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
                 self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
-                # logger.info("self_available_cars[0] {} n_req_0 {}".format(self._available_cars[0], n_req_0))
-                # logger.info("self_available_cars[1] {} n_req_1 {}".format(self._available_cars[1], n_req_1))
-
-                # logger.info("----- obs: {}".format(obs))
 
                 # A number of notes in the information dictionary.
                 info['rental_requests'] = [n_req_0, n_req_1]
@@ -150,11 +142,6 @@ class CarRentalActualEnv(BaseActualEnv):
                 self._available_cars[dst] = min(self._available_cars[dst] + n_moving, self._max_num_cars_per_loc)
 
                 self._reward = self._reward - (n_moving * 0.005 * 2)
-                # logger.info("Reward: {} n_moving {}".format(self._reward, n_moving))
-                # logger.info("returned n_return_0={}, n_return_1={}".format(n_return_0, n_return_1))
-                # logger.info("action {} available".format(action))
-                # logger.info("self._available_cars[0] {} - n_moving {}".format(self._available_cars[0], n_moving))
-                # logger.info("self._available_cars[1] {} - n_moving {}".format(self._available_cars[1], n_moving))
 
 
                 self._t += 1
