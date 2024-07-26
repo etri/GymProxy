@@ -126,7 +126,11 @@ class CarRentalSimulator:
             # action = CarRentalActualEnv.get_action(obs, self._reward, terminated, truncated, info)
             max_num_cars_for_move = 5
             # ready = Tuple((Discrete(2), Box(low=0, high=max_num_cars_for_move, shape=(1,), dtype=np.int_)))
-            action = action = self.client.get_action(self.eid, self.obs)
+            if self._t != 0:
+                action = self.client.get_action(self.eid, self.obs)
+            else:
+                action = (0, np.array([0]))
+
             # print("action:", action)
             src = action[0]
             dst = 1 - src
