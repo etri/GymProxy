@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 import argparse
-import time
+import logging
 
 import numpy as np
 from ray.rllib.env.policy_client import PolicyClient
-import logging
 
 # Setting logger
 FORMAT = "[%(asctime)s|%(levelname)s|%(name)s] %(message)s"
