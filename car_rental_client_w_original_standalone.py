@@ -66,7 +66,7 @@ class CarRentalSimulator:
 
         :param kwargs: Dictionary of keyword arguments.
         """
-        obs = None
+        self.obs = None
         terminated = False
         truncated = False
         info = {}
@@ -168,13 +168,13 @@ class CarRentalSimulator:
             action_str = 'action: {} '.format(action)
             result_str = step_str + obs_str + reward_str + info_str + action_str
             logger.info(result_str)
-            self.client.log_returns(self.eid, self._reward, info=info)
+            self.client.log_returns(episode_id=self.eid, reward=self._reward, info=info)
 
         # Arrives to the end of the episode (terminal state).
         logger.info(info)
         terminated = True
         truncated = True
-        self.client.end_episode(self.eid, self.obs)
+        self.client.end_episode(episode_id=self.eid, observation=obs)
         # CarRentalActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
 
 
@@ -195,7 +195,7 @@ parser.add_argument(
 parser.add_argument(
     "--stop-reward",
     type=float,
-    default=9999,
+    default=99999,
     help="Stop once the specified reward is reached.",
 )
 parser.add_argument(

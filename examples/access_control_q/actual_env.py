@@ -7,10 +7,11 @@ Queuing Task).
 """
 
 import logging
+import random
 from typing import Optional
 
 import numpy as np
-import random
+from numba import njit
 
 from gymproxy.base_actual_env_cy import BaseActualEnv, TerminateGymProxy
 

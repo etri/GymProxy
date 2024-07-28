@@ -90,7 +90,7 @@ def log_step(episode: int, step: int, obs: np.ndarray, reward: float, done: bool
     logger.info(result_str)
 
 # Training loop
-NUM_TRAINING_ITERATIONS = 25
+NUM_TRAINING_ITERATIONS = 10
 SAVE_INTERVAL = 100
 
 for iteration in range(NUM_TRAINING_ITERATIONS):

@@ -88,26 +88,26 @@ class CarRentalActualEnv(BaseActualEnv):
                     self._reward = 0
                     terminated = True
                     truncated = True
-                if self._available_cars[1] < n_req_1:
-                    self._reward = 0
-                    if terminated:
-                        msg += ' and location 1'
-                    else:
-                        msg = 'The business is lost because no available car at location 1'
-                        terminated = True
-                        truncated = True
-                if terminated:
-                    msg += '.'
+                # if self._available_cars[1] < n_req_1:
+                #     self._reward = 0
+                #     if terminated:
+                #         msg += ' and location 1'
+                #     else:
+                #         msg = 'The business is lost because no available car at location 1'
+                #         terminated = True
+                #         truncated = True
+                # if terminated:
+                #     msg += '.'
 
                 self._available_cars[0] = max(self._available_cars[0] - n_req_0, 0)
                 self._available_cars[1] = max(self._available_cars[1] - n_req_1, 0)
 
                 # A number of notes in the information dictionary.
                 info['rental_requests'] = [n_req_0, n_req_1]
-                if msg:
-                    info['msg'] = msg
-                elif 'msg' in info.keys():
-                    del info['msg']
+                # if msg:
+                #     info['msg'] = msg
+                # elif 'msg' in info.keys():
+                #     del info['msg']
 
                 # Checks if the business is lost.
                 if terminated:
