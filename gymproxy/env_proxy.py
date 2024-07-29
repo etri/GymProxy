@@ -15,7 +15,7 @@ def singleton(class_):
         print("args: {}".format(args))
         print("kwargs: {}".format(kwargs))
         if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
+            instances[class_] = class_(*args, kwargs)
         return instances[class_]
     return getinstance
 

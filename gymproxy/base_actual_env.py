@@ -4,7 +4,7 @@
 """
 
 from abc import *
-from gymproxy.env_proxy_cy import EnvProxy
+from gymproxy.env_proxy import EnvProxy
 from typing import Optional
 
 class TerminateGymProxy(Exception):

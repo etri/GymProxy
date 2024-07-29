@@ -7,8 +7,8 @@ from typing import TypeVar, Optional
 
 import gymnasium
 
-from gymproxy.base_actual_env_cy import BaseActualEnv
-from gymproxy.env_proxy_cy import EnvProxy
+from gymproxy.base_actual_env import BaseActualEnv
+from gymproxy.env_proxy import EnvProxy
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
