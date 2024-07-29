@@ -84,18 +84,18 @@ class CarRentalActualEnv(BaseActualEnv):
 
                 # Checks if there is out of car for the two locations
                 if self._available_cars[0] < n_req_0:
-                    msg = 'The business is lost because no available car at location 0'
+                #    msg = 'The business is lost because no available car at location 0'
                     self._reward = 0
                     terminated = True
                     truncated = True
-                # if self._available_cars[1] < n_req_1:
-                #     self._reward = 0
-                #     if terminated:
-                #         msg += ' and location 1'
-                #     else:
-                #         msg = 'The business is lost because no available car at location 1'
-                #         terminated = True
-                #         truncated = True
+                if self._available_cars[1] < n_req_1:
+                    self._reward = 0
+                    # if terminated:
+                    #     msg += ' and location 1'
+                    # else:
+                        #msg = 'The business is lost because no available car at location 1'
+                    terminated = True
+                    truncated = True
                 # if terminated:
                 #     msg += '.'
 
