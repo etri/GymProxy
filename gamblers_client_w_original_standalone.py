@@ -65,7 +65,7 @@ class GamblersProblemSimulator:
 
             # print("bet: {}".format(bet))
             terminated = False
-            flip_result = None
+            info = {}
 
             raw_action = np.array(max(np.round(bet.item() * self._s), 1))
             bet = min(raw_action, self._s, self._s_win - self._s)
@@ -73,17 +73,17 @@ class GamblersProblemSimulator:
             r = np.random.rand()
             if r < self._p_h:
                 self._s += bet
-                flip_result = 'head'
+                info['flip_result'] = 'head'
             else:
                 self._s -= bet
-                flip_result = 'tail'
+                info['flip_result'] = 'tail'
 
             if self._s >= self._s_win:
-                msg = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
+                info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                 self._reward = 2.
                 terminated = True
             elif self._s <= 0:
-                msg = 'Loses the game due to out of money.'
+                info['msg'] = 'Loses the game due to out of money.'
                 self._reward = -0.5
                 terminated = True
             else:
@@ -94,16 +94,20 @@ class GamblersProblemSimulator:
                 terminated = True
 
             obs = np.array([self._s], dtype=np.int32)
-            self.client.log_returns(episode_id=self.eid, reward=self._reward, info={"msg": msg,"flip_result": flip_result, "bet": bet})
+            self.client.log_returns(episode_id=self.eid, reward=self._reward, info=info)
 
             if terminated:
                 if self._reward == 0:
                     self._reward = -1.
-                logger.info(msg)
+                logger.info(info['msg'])
                 break
 
             self._t += 1
 
+        obs = np.array([self._s], dtype=np.int_)
+        obs = obs.flatten()
+        terminated = True
+        truncated = True
         self.client.end_episode(episode_id=self.eid, observation=obs)
 
 
