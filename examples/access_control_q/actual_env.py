@@ -11,7 +11,6 @@ import random
 from typing import Optional
 
 import numpy as np
-from numba import njit
 
 from gymproxy.base_actual_env_cy import BaseActualEnv, TerminateGymProxy
 

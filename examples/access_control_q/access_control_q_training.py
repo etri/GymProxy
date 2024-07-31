@@ -31,7 +31,7 @@ config.update_from_dict(
     {
         "callback_verbose": False,
         # "rollout_fragment_length": 1000,
-        "train_batch_size": 20000,
+        "train_batch_size": 4000,
         "model": {"use_lstm": False},
     }
 )

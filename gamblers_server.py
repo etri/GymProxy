@@ -95,6 +95,7 @@ def get_cli_args():
     )
     parser.add_argument(
         "--no-tune",
+        default=True,
         action="store_true",
         help="Run without Tune using a manual train loop instead. Here,"
         "there is no TensorBoard support.",
