@@ -35,6 +35,7 @@ class GamblersProblemSimulator:
 
     def step(self, bet):
         """Performs one step in the environment."""
+        print("bet: {}".format(bet))
         terminated = False
         flip_result = None
 

@@ -26,7 +26,7 @@ class GamblersProblemSimulator:
     """External environment class that actually simulates gambler's problem.
     """
 
-    def __init__(self, eid, client, num_steps, prob_head, initial_capital, winning_captial):
+    def __init__(self, eid, client, num_steps, prob_head, initial_capital, winning_capital):
         """Constructor.
 
         :param kwargs: Dictionary of keyword arguments. It should have 'config' argument that is a dictionary for
@@ -41,7 +41,7 @@ class GamblersProblemSimulator:
         self._num_steps = num_steps
         self._p_h = prob_head
         self._s = initial_capital
-        self._s_win = winning_captial
+        self._s_win = winning_capital
         self._reward = 0.
         self._t = 0
 
@@ -54,62 +54,58 @@ class GamblersProblemSimulator:
         terminated = False
         np.random.seed(seed_)
         while self._t < self._num_steps:
-            obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
+            obs = np.array([self._s], dtype=np.int32)     # Observation is current capital.
             # bet = max(np.random.randint(0, self._s), 1)
             # logger.info(obs)
             # bet = min(obs.item(), self._s_win - self._s)
             if self._t != 0:
                 bet = client.get_action(eid, obs)
             else:
-                bet = np.random.rand()
+                bet = np.array([0.])
 
-            raw_action = np.array(max(round(bet * self._s), 1))
-            bet = min(raw_action, self._s, self._s_win - self._s)
-
-            if self._t == 0:
-                init_str = 'init obs: {} '.format(self._s)
-                logger.info(init_str)
+            print("bet: {}".format(bet))
+            terminated = False
             flip_result = None
 
-            # Flips the coin
+            raw_action = np.array(max(np.round(bet.item() * self._s), 1))
+            bet = min(raw_action, self._s, self._s_win - self._s)
 
             r = np.random.rand()
-            logger.debug(self._p_h)
-            logger.debug(r)
-
             if r < self._p_h:
                 self._s += bet
-                info['flip_result'] = 'head'
+                flip_result = 'head'
             else:
                 self._s -= bet
-                info['flip_result'] = 'tail'
+                flip_result = 'tail'
 
-            # Checks if the gambler wins or not.
             if self._s >= self._s_win:
-                info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
+                msg = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                 self._reward = 2.
                 terminated = True
             elif self._s <= 0:
-                info['msg'] = 'Loses the game due to out of money.'
-                terminated = True
+                msg = 'Loses the game due to out of money.'
                 self._reward = -0.5
+                terminated = True
+            else:
+                self._reward = 0.
 
-            step_str = '{}-th step / '.format(self._t)
-            obs_str = 'obs: {} / '.format(self._s)
-            reward_str = 'reward: {} '.format(self._reward)
-            info_str = 'info: {} / '.format(flip_result)
-            action_str = 'action: {} '.format(bet)
-            result_str = step_str + obs_str + reward_str + info_str + action_str
-            self.client.log_returns(episode_id=self.eid, reward=self._reward, info=info)
+            self._t += 1
+            if self._t >= self._num_steps:
+                terminated = True
+
+            obs = np.array([self._s], dtype=np.int32)
+            self.client.log_returns(episode_id=self.eid, reward=self._reward, info={"flip_result": flip_result, "bet": bet})
 
             if terminated:
                 if self._reward == 0:
                     self._reward = -1.
-                logger.info(info['msg'])
+                logger.info(msg)
                 break
 
             self._t += 1
+
         self.client.end_episode(episode_id=self.eid, observation=obs)
+
 
 
 
@@ -133,7 +129,7 @@ parser.add_argument(
     help="Stop once the specified reward is reached.",
 )
 parser.add_argument(
-    "--port", type=int, default=9900, help="The port to use (on localhost)."
+    "--port", type=int, default=9999, help="The port to use (on localhost)."
 )
 
 if __name__ == "__main__":
