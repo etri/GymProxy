@@ -63,7 +63,7 @@ class GamblersProblemSimulator:
             else:
                 bet = np.array([0.])
 
-            print("bet: {}".format(bet))
+            # print("bet: {}".format(bet))
             terminated = False
             flip_result = None
 
@@ -94,7 +94,7 @@ class GamblersProblemSimulator:
                 terminated = True
 
             obs = np.array([self._s], dtype=np.int32)
-            self.client.log_returns(episode_id=self.eid, reward=self._reward, info={"flip_result": flip_result, "bet": bet})
+            self.client.log_returns(episode_id=self.eid, reward=self._reward, info={"msg": msg,"flip_result": flip_result, "bet": bet})
 
             if terminated:
                 if self._reward == 0:
