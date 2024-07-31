@@ -126,23 +126,23 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     # print(type(self._s), type(bet))
                     # print("flip_result ", self._s, bet)
                     self._s += bet
-                    info['flip_result'] = 'head'
+                    # info['flip_result'] = 'head'
                 else:
                     # logger.info("tails")
                     bet = bet.flatten()
                     # print("flip_result ", self._s, bet)
                     self._s -= bet
-                    info['flip_result'] = 'tail'
+                    # info['flip_result'] = 'tail'
 
                 # Checks if the gambler wins or not.
                 if self._s >= self._s_win:
-                    info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
+                    # info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                     done = True
                     truncated = True
                     self._reward = 2.
                     # self._s = self._ic
                 elif self._s <= 0.:
-                    info['msg'] = 'Loses the game due to out of money.'
+                    # info['msg'] = 'Loses the game due to out of money.'
                     done = True
                     truncated = True
                     # self._s = self._ic
