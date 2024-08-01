@@ -12,8 +12,6 @@ from typing import Optional
 def singleton(class_):
     instances = {}
     def getinstance(*args, **kwargs):
-        print("args: {}".format(args))
-        print("kwargs: {}".format(kwargs))
         if class_ not in instances:
             instances[class_] = class_(*args, kwargs)
         return instances[class_]

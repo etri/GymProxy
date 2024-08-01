@@ -73,17 +73,17 @@ class GamblersProblemSimulator:
             r = np.random.rand()
             if r < self._p_h:
                 self._s += bet
-                # info['flip_result'] = 'head'
+                info['flip_result'] = 'head'
             else:
                 self._s -= bet
-                # info['flip_result'] = 'tail'
+                info['flip_result'] = 'tail'
 
             if self._s >= self._s_win:
-                # info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
+                info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
                 self._reward = 2.
                 terminated = True
             elif self._s <= 0:
-                # info['msg'] = 'Loses the game due to out of money.'
+                info['msg'] = 'Loses the game due to out of money.'
                 self._reward = -0.5
                 terminated = True
             else:

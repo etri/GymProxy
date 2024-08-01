@@ -68,7 +68,7 @@ def main():
             if reward < 0:
                 reward = 0
             total_reward += reward
-            if info["flip_result"] == "head":
+            if info != {} and info["flip_result"] == "head":
                 # print("test", capital, action)
                 capital += action
             else:

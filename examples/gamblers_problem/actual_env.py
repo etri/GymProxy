@@ -11,7 +11,7 @@ import random
 import copy
 from typing import Optional
 
-from gymproxy.base_actual_env_cy import BaseActualEnv, TerminateGymProxy
+from gymproxy.base_actual_env import BaseActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('gamblers_problem_actual_env')
 
@@ -79,23 +79,23 @@ class GamblersProblemActualEnv(BaseActualEnv):
             # if seed_ >= 100:
             #     print("")
             # logger.info("Starting gambler's self._s=" + str(self._s))
-            done = False
-            truncated = False
             info = {}
+            terminated = False
+            truncated = False
             logger.debug(seed_)
             np.random.seed(seed_)  # added seed
-            while self._t < self._num_steps and not done:
+            while self._t < self._num_steps and not terminated:
 
                 obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
-                obs = obs.flatten()
-                if obs[0] < 0 or obs[0] > 100:
-                    logger.info("obs in run: ", obs)
-                    print("obs in run: ", obs)
+                # obs = obs.flatten()
+                # if obs[0] < 0 or obs[0] > 100:
+                #     logger.info("obs in run: ", obs)
+                #     print("obs in run: ", obs)
 
                 # logger.info("current obs: {}".format(obs))
-                raw_action = GamblersProblemActualEnv.get_action(obs, self._reward, done, truncated, info)
+                raw_action = GamblersProblemActualEnv.get_action(obs, self._reward, terminated, truncated, info)
                 # logger.info("current action {} and obs: {} action*obs {}".format(raw_action, obs, raw_action[0]*obs[0]))
-                raw_action = np.array(max(round(raw_action[0] * obs[0]), 1))
+                raw_action = np.array(max(np.round(raw_action[0] * obs[0]), 1))
                 action = min(raw_action, self._s, self._s_win - self._s)
                 # logger.info("action {}".format(action))
                 info = {}
@@ -111,20 +111,20 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 else:
                     tmp = action
                     #print("tmp {}, self._s_win {} self._s {}".format(tmp, self._s_win, self._s))
-                    bet = action
+                    bet = np.int32(action)
                     # logger.info("bet: {} action {} s_win - s {}".format(bet, action, self._s_win-self._s))
 
                 # Flips the coin
                 r = np.random.rand()
                 # logger.info("r {}".format(r))
-                logger.debug(self._p_h)
-                logger.debug(r)
+                # logger.debug(self._p_h)
+                # logger.debug(r)
 
                 if r < self._p_h:
                     # logger.info("heads")
                     bet = bet.flatten()
                     # print(type(self._s), type(bet))
-                    # print("flip_result ", self._s, bet)
+                    # print("_s {} bet {}", self._s, bet)
                     self._s += bet
                     # info['flip_result'] = 'head'
                 else:
@@ -137,13 +137,13 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 # Checks if the gambler wins or not.
                 if self._s >= self._s_win:
                     # info['msg'] = 'Wins the game because the capital becomes over {} dollars.'.format(self._s)
-                    done = True
+                    terminated = True
                     truncated = True
                     self._reward = 2.
                     # self._s = self._ic
                 elif self._s <= 0.:
                     # info['msg'] = 'Loses the game due to out of money.'
-                    done = True
+                    terminated = True
                     truncated = True
                     # self._s = self._ic
                     self._reward = -0.5
@@ -156,10 +156,10 @@ class GamblersProblemActualEnv(BaseActualEnv):
             if self._t >= self._num_steps and self._reward == 0:
                 self._reward = -1.
             obs = np.array([self._s], dtype=np.int_)
-            obs = obs.flatten()
-            done = True
+            # obs = obs.flatten()
+            terminated = True
             truncated = True
-            GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, done, truncated, info)
+            GamblersProblemActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
 
         # Exception handling block.
         except TerminateGymProxy:
