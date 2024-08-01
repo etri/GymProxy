@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import copy
 import logging
 
 import numpy as np
@@ -40,7 +41,8 @@ class GamblersProblemSimulator:
         self.client = client
         self._num_steps = num_steps
         self._p_h = prob_head
-        self._s = initial_capital
+        self._ic = np.array([copy.deepcopy(initial_capital)])
+        self._s = np.copy(self._ic)
         self._s_win = winning_capital
         self._reward = 0.
         self._t = 0
@@ -50,6 +52,7 @@ class GamblersProblemSimulator:
 
         :param kwargs: Dictionary of keyword arguments.
         """
+        self._s = np.copy(self._ic)
         info = {}
         terminated = False
         np.random.seed(seed_)
@@ -69,6 +72,7 @@ class GamblersProblemSimulator:
 
             raw_action = np.array(max(np.round(bet.item() * self._s), 1))
             bet = min(raw_action, self._s, self._s_win - self._s)
+            bet = np.int32(bet)
 
             r = np.random.rand()
             if r < self._p_h:

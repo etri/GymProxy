@@ -5,11 +5,11 @@ reference:
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 4.3: Gambler's Problem).
 """
 
-import logging
-import numpy as np
-import random
 import copy
+import logging
 from typing import Optional
+
+import numpy as np
 
 from gymproxy.base_actual_env import BaseActualEnv, TerminateGymProxy
 
@@ -49,7 +49,6 @@ class GamblersProblemActualEnv(BaseActualEnv):
         self._s_win = kwargs['winning_capital']
         self._reward = 0.
         self._t = 0
-        from examples.gamblers_problem.gym_env import GamblersProblem
         # GamblersProblem.update_action_space(self, obs=self._s[0])
 
     def run(self, seed_:int, kwargs: Optional[dict] = None):
@@ -82,7 +81,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             info = {}
             terminated = False
             truncated = False
-            logger.debug(seed_)
+            # logger.debug(seed_)
             np.random.seed(seed_)  # added seed
             while self._t < self._num_steps and not terminated:
 
@@ -149,7 +148,6 @@ class GamblersProblemActualEnv(BaseActualEnv):
                     self._reward = -0.5
 
                 self._t += 1
-                from examples.gamblers_problem.gym_env import GamblersProblem
                 # GamblersProblem.update_action_space(self, obs=self._s)
 
             # Arrives to the end of the episode (terminal state).
