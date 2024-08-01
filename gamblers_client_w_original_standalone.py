@@ -58,6 +58,7 @@ class GamblersProblemSimulator:
         np.random.seed(seed_)
         while self._t < self._num_steps:
             obs = np.array([self._s], dtype=np.int32)     # Observation is current capital.
+            obs = obs.flatten()
             # bet = max(np.random.randint(0, self._s), 1)
             # logger.info(obs)
             # bet = min(obs.item(), self._s_win - self._s)
