@@ -1,7 +1,7 @@
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 #         Sae Hyong Park <labry@etri.re.kr>
 
-"""Module including TerminateGymProxy and BaseActualEnv classes.
+"""Module including TerminateGymProxy and ActualEnv classes.
 """
 
 from abc import *
