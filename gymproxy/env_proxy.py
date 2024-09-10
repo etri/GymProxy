@@ -1,4 +1,5 @@
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
+#         Sae Hyong Park <labry@etri.re.kr>
 
 """Module including EnvProxy class.
 """
