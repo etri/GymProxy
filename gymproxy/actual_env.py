@@ -16,7 +16,7 @@ class TerminateGymProxy(Exception):
         super().__init__('TerminateGymProxy')
 
 
-class BaseActualEnv(ABC):
+class ActualEnv(ABC):
     """Base class of external environment that actually implements a target simulation.
     """
     env_proxy = None    # Class variable for holding the reference of the environment proxy object.
