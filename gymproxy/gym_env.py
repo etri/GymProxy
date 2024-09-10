@@ -1,20 +1,21 @@
 # Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
+#         Sae Hyong Park <labry@etri.re.kr>
 
 """Module including BaseEnv class.
 """
+
+import gymnasium as gym
+
 from abc import *
 from typing import TypeVar, Optional
-
-import gymnasium
-
-from gymproxy.base_actual_env import BaseActualEnv
+from gymproxy.actual_env import ActualEnv
 from gymproxy.env_proxy import EnvProxy
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
 
-class BaseEnv(gymnasium.Env, metaclass=ABCMeta):
+class GymEnv(gym.Env, metaclass=ABCMeta):
     """Base class of gym-type environment.
     """
     metadata = {'render_modes': ['human']}
