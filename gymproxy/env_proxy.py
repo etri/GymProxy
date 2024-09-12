@@ -23,18 +23,16 @@ class EnvProxy(ABC):
     """Environment proxy that plays a role of interface between a gym-type and external actual environment.
     """
 
-    def __init__(self, init_actual_env: callable, reset_actual_env: callable, close_actual_env: callable, kwargs: Optional[dict] = None):
+    def __init__(self, init_actual_env: callable, actual_env_class, kwargs: Optional[dict] = None):
         """Constructor.
 
-        :param init_actual_env: Function for initializing the actual environment.
-        :param reset_actual_env: Function for resetting the actual environment.
-        :param close_actual_env: Function for closing the actual environment.
-        :param kwargs: Dictionary of keyword arguments. It should include a dictionary indexed by 'config' keyword.
+        Args:
+            actual_env_class: TBD. 
+            kwargs: Dictionary of keyword arguments. It should include a dictionary indexed by 'config' keyword.
         """
         # Prepares a thread pool and synchronization variables.
         self._pool = ThreadPoolExecutor(max_workers=1)
         self._future = None
-        # print("EnvProxy __init__ called self._lock = Lock()")
         self._lock = Lock()                 # For locking a critical section.
         self._actual_env_event = Event()    # Event for signaling the actual environment to enter the critical section.
         self._gym_env_event = Event()       # Event for signaling gym-type environment to enter the critical section.
@@ -42,13 +40,10 @@ class EnvProxy(ABC):
         self._gym_env_event.clear()
 
         self._config = kwargs
-        # print("self._config {}".format(self._config))
         kwargs['env_proxy'] = self      # Adds self-reference to kwargs
 
-        # Prepares the function objects for handling the actual environment.
-        self._actual_env = init_actual_env(kwargs)
-        self._reset_actual_env = reset_actual_env
-        self._close_actual_env = close_actual_env
+        # Launches the actual environment.
+        self._actual_env = eval('actual_env_class(kwargs)')
 
         # Critical section variables
         self._closing = False
