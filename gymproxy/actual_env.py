@@ -22,17 +22,19 @@ class ActualEnv(ABC):
     env_proxy = None    # Class variable for holding the reference of the environment proxy object.
 
     def __init__(self, env_proxy: EnvProxy):
-        """Constructor.
+         """Constructor.
 
-        :param env_proxy: Environment proxy object.
+        Args:
+            env_proxy: Environment proxy object.
         """
-        BaseActualEnv.env_proxy = env_proxy
+        ActualEnv.env_proxy = env_proxy
 
     @abstractmethod
     def run(self, seed:int, kwargs: Optional[dict] = None):
         """Should define the main control loop of the actual environment here.
 
-        :param kwargs: Dictionary of keyword arguments for beginning the actual environment.
+        Args:
+            kwargs: Dictionary of keyword arguments for beginning the actual environment.
         """
         raise NotImplementedError
 
@@ -40,7 +42,8 @@ class ActualEnv(ABC):
     def finish(self, kwargs: Optional[dict] = None):
         """Should define the procedure required for finishing actual environment here.
 
-        :param kwargs: Dictionary of keyword arguments for finishing the actual environment.
+        Args:
+            kwargs: Dictionary of keyword arguments for finishing the actual environment.
         """
         raise NotImplementedError
 
@@ -48,16 +51,18 @@ class ActualEnv(ABC):
     def get_action(obs: object, reward: float, done: bool, truncated:bool, info: dict) -> any:
         """Gets action from the environment proxy. This method should be called in the scope of the actual environment.
 
-        :param obs: Observation to be given to the agent.
-        :param reward: Reward to be given to the agent.
-        :param done: Indicates whether the actual environment is finished or not.
-        :param info: Information that is additionally to be given to the agent.
-        :return: action: Action from the agent.
+        Args:
+            obs: Observation to be given to the agent.
+            reward: Reward to be given to the agent.
+            done: Indicates whether the actual environment is finished or not.
+            info: Information that is additionally to be given to the agent.
+        Returns: 
+            action: Action from the agent.
         """
         #print("base_actual_env get_action() called")
-        action, closing = BaseActualEnv.env_proxy.get_action(obs, reward, done, truncated, info)
+        action, closing = ActualEnv.env_proxy.get_action(obs, reward, done, truncated, info)
+        
         if closing:
-            #print("base_actual_env get_action(): Closing environment")
             raise TerminateGymProxy()
         return action
 
@@ -66,9 +71,10 @@ class ActualEnv(ABC):
         """Sends observation, reward, done, and information to the agent, but do not receive action. This method should
         be called in the scope of environment when the begin or end of an episode.
 
-        :param obs: Observation to be given to the agent.
-        :param reward: Reward to be given to the agent.
-        :param done: Indicates whether the actual environment is finished or not.
-        :param info: Information that is additionally to be given to the agent.
+        Args:
+            obs: Observation to be given to the agent.
+            reward: Reward to be given to the agent.
+            done: Indicates whether the actual environment is finished or not.
+            info: Information that is additionally to be given to the agent.
         """
-        BaseActualEnv.env_proxy.set_obs_and_reward(obs, reward, done, truncated, info)
+        ActualEnv.env_proxy.set_obs_and_reward(obs, reward, done, truncated, info)
