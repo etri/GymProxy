@@ -38,7 +38,7 @@ class GymEnv(gym.Env, metaclass=ABCMeta):
         super().__init__()
         
         # Initializes the environment proxy object.
-        self._env_proxy = EnvProxy(self.init_actual_env, self.reset_actual_env, self.close_actual_env, **config)
+        self._env_proxy = EnvProxy(GymEnv.actual_env_class, **config)
 
         self.observation_space = obs_space
         self.action_space = action_space
