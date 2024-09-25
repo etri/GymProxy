@@ -110,16 +110,13 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             # print("self._cnt: {}".format(self._cnt))
         # Exception handling block.
         except TerminateGymProxy:
-
             # Means termination signal triggered by the agent.
             logger.info('Terminating AccessControlQueue environment.')
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            BaseActualEnv.env_proxy.terminate_sync()
             exit(1)
         except Exception as e:
             logger.exception(e)
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            BaseActualEnv.env_proxy.terminate_sync()
             exit(1)
 
     def finish(self, kwargs: Optional[dict] = None):
