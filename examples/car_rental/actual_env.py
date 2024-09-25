@@ -11,12 +11,12 @@ from typing import Optional
 
 import numpy as np
 
-from gymproxy.base_actual_env import BaseActualEnv, TerminateGymProxy
+from gymproxy.base_actual_env import ActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('car_rental_actual_env')
 
 
-class CarRentalActualEnv(BaseActualEnv):
+class CarRentalActualEnv(ActualEnv):
     """External environment class that actually simulates Jack's car rental.
     """
 
@@ -155,13 +155,11 @@ class CarRentalActualEnv(BaseActualEnv):
         except TerminateGymProxy:
             # Means termination signal triggered by the agent.
             logger.info('Terminating CarRental environment.')
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
         except Exception as e:
             logger.exception(e)
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
 
     def finish(self, kwargs: Optional[dict] = None):
