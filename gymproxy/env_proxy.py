@@ -33,7 +33,6 @@ class EnvProxy(ABC):
         # Prepares a thread pool and synchronization variables.
         self._pool = ThreadPoolExecutor(max_workers=1)
         self._future = None
-        self._lock = Lock()                 # For locking a critical section.
         self._actual_env_event = Event()    # Event for signaling the actual environment to enter the critical section.
         self._gym_env_event = Event()       # Event for signaling gym-type environment to enter the critical section.
         self._actual_env_event.clear()
@@ -61,37 +60,20 @@ class EnvProxy(ABC):
             seed: TBD. 
             options: Dictionary of optional arguments.
         """
-        #print("reset_acutal_env")
         def reset_actual_env_(seed:int, options: Optional[dict] = None):
             """Nested function for adding synchronization mechanism to _reset_actual_env() function. This function is
             executed in a thread provided by _pool. This implies that the actual environment is executed in a  separate
             thread provided by _pool.
             """
-            # Enters the critical section if it is unlocked. Otherwise, wait until the critical section is unlocked as
-            # a result of calling get_obs() method from a gym-type environment.
-
-            self._lock.acquire()
-
             self._actual_env_event.wait()   # Waits for calling get_obs() method from the gym-type environment.
             self._actual_env.run(seed, options)    # Actually resets the actual environment.
-
-        # Locks the critical section for making reset_actual_env_() stopped before resetting the actual environment. It
-        # will be unlocked by get_obs() method calling from the gym-type environment.
-
-        if not self._lock.locked():
-            self._lock.acquire()
-            self._lock.release()
-
-        self._closing = False
 
         # Begins the thread for executing the actual environment.
         self._future = self._pool.submit(reset_actual_env_, seed, options)
 
-
     def close_actual_env(self):
         """Closes the actual environment.
         """
-        
         self._actual_env.finish(kwargs)    # Actually closes the actual environment.
 
         # Drive the thread for actual environment finished.
@@ -102,48 +84,40 @@ class EnvProxy(ABC):
     def get_obs_and_reward(self) -> (object, float, bool, bool, dict):
         """Gets observation and reward from the actual environment. Called by gym-type environment.
 
-        :return: Tuple of (observation, reward, terminated, info).
-            observation: Agent's observation of the actual environment.
-            reward: Amount of reward returned after previous action.
-            terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
-            info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
+        Returns: 
+            observation (ObsType): Agent's observation of the actual environment.
+            reward (float): Amount of reward returned after previous action.
+            terminated (bool): Whether the episode has ended, in which case further step() calls will return undefined results.
+            info (dictionary): Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).    
         """
-        #print("get_obs_and_reward")
         self._sync_gym_env()   # Resumes the actual environment, and then, waits until the actual environment stops.
 
         # Obtains a tuple of (observation, reward, terminated, info) after the actual environment stops.
         return self._obs, self._reward, self._terminated, self._truncated, self._info
 
-    def get_obs(self) -> object:
-        """Gets observation from the actual environment. Called by gym-type environment.
-
-        :return: observation: Agent's observation of the current environment.
-        """
-        #print("get_obs")
-        self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
-        return self._obs        # Obtains observation after the actual environment stops.
-
     def get_obs_and_info(self) -> (object, dict):
-        """Gets observation from the actual environment. Called by gym-type environment.
+        """Gets observation and information from the actual environment. Called by gym-type environment.
 
-        :return: observation: Agent's observation of the current environment.
+        Returns: 
+            observation (ObsType): Agent's observation of the actual environment.
+            info (dictionary): Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
-        #print("get_obs_and_info")
         self._sync_gym_env()    # Resumes the actual environment, and then, waits until the actual environment stops.
         return self._obs, self._info         # Obtains observation after the actual environment stops.
 
     def get_action(self, obs: object, reward: float, terminated: bool, truncated:bool, info: dict) -> (object, bool):
         """Gets action from the gym-type environment. Called by the actual environment.
 
-        :param obs: Agent's observation of the actual environment.
-        :param reward: Amount of reward returned after previous action.
-        :param terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
-        :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
-        :return: Tuple of (action, closing).
+        Args:
+            obs: Agent's observation of the actual environment.
+            reward: Amount of reward returned after previous action.
+            terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
+            info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
+        
+        Returns: 
             action: An action provided by gym-type environment.
             closing: Whether the actual environment should be closed or not.
         """
-        #print("env_proxy get_action")
         self.set_obs_and_reward(obs, reward, terminated, truncated, info)
 
         # Obtains observation after the gym-type environment stops.
@@ -152,13 +126,12 @@ class EnvProxy(ABC):
     def set_obs_and_reward(self, obs: object, reward: float, terminated: bool, truncated: bool, info: dict):
         """Sets tuple of (observation, reward, terminated, info) from the actual environment.
 
-        :param obs: Agent's observation of the actual environment.
-        :param reward: Amount of reward returned after previous action.
-        :param terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
-        :param info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
+        Args:
+            obs: Agent's observation of the actual environment.
+            reward: Amount of reward returned after previous action.
+            terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
+            info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
-        #print("set_obs_and_reward", obs, reward, terminated)
-        #labry debugging
         self._obs = obs.flatten()
         self._reward = reward
         self._terminated = terminated
@@ -171,9 +144,9 @@ class EnvProxy(ABC):
     def set_action(self, action: object):
         """Sets action from the gym-type environment.
 
-        :param action: An action provided by the gym-type environment.
+        Args:
+            action: An action provided by the gym-type environment.
         """
-        #print("set_action")
         self._action = action
 
     def terminate_sync(self):
@@ -184,40 +157,28 @@ class EnvProxy(ABC):
     def set_gym_env_event(self):
         """Sets _gym_env_event. Utility method required for closing safely the actual environment.
         """
-        #print("set_gym_env_event")
         self._gym_env_event.set()
 
     def _sync_actual_env(self, terminated):
         """Resumes the gym-type environment and wait for its next stop. Called by the actual environment.
 
-        :param terminated: Whether the episode should be ended.
+        Args:
+            terminated: Whether the episode should be ended.
         """
         # Resumes the gym-type environment.
-        #print("_sync_actual_env called {}", terminated)
         self._actual_env_event.clear()
-        #print("_sync_actual_env called 1")
         self._gym_env_event.set()
-        #print("_sync_actual_env called 2")
-        #print("self._lock ", self._lock)
-        if terminated:
-            self._lock.release()
-        #print("_sync_actual_env called 3")
 
         # Wait during the gym-type environment is active.
         if not terminated:
-            #print("if not terminated")
             self._actual_env_event.wait()
-            #self._lock.acquire()
 
     def _sync_gym_env(self):
         """Resumes the actual environment and wait for its next stop. Called by the gym-type environment.
         """
         # Resumes the actual environment.
-        #print("_sync_gem_env called")
         self._gym_env_event.clear()
         self._actual_env_event.set()
-        #self._lock.release()
 
         # Waits during the actual environment is active.
         self._gym_env_event.wait()
-        #self._lock.acquire()
