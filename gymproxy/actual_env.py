@@ -68,8 +68,8 @@ class ActualEnv(ABC):
 
     @staticmethod
     def set_obs_and_reward(obs: object, reward: float, done: bool, truncated:bool, info: dict):
-        """Sends observation, reward, done, and information to the agent, but do not receive action. This method should
-        be called in the scope of environment when the begin or end of an episode.
+        """Sends observation, reward, done, and information to the agent, but do not receive action. 
+        This method should be called in the scope of environment when the begin or end of an episode.
 
         Args:
             obs: Observation to be given to the agent.
