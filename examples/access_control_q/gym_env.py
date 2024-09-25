@@ -13,11 +13,11 @@ import numpy as np
 
 from examples.access_control_q.actual_env import AccessControlQueueActualEnv
 from gymnasium.spaces import Box, Discrete
-from gymproxy import BaseEnv
+from gymproxy import GymEnv
 
 logger = logging.getLogger('access-control-q')
 
-class AccessControlQueue(BaseEnv):
+class AccessControlQueue(GymEnv):
     """Class defining observation and action spaces of gym-type AccessControlQueue environment.
     """
     def __init__(self, config: Optional[dict] = None):
@@ -36,7 +36,7 @@ class AccessControlQueue(BaseEnv):
                       'server_free_probability': SERVER_FREE_PROB,
                       'priorities': PRIORITIES}
 
-        BaseEnv.actual_env_class = AccessControlQueueActualEnv
+        GymEnv.actual_env_class = AccessControlQueueActualEnv
         super().__init__(config)
 
     @staticmethod
