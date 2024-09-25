@@ -12,12 +12,12 @@ from typing import Optional
 
 import numpy as np
 
-from gymproxy.base_actual_env import BaseActualEnv, TerminateGymProxy
+from gymproxy.base_actual_env import ActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('access_control_q_actual_env')
 
 
-class AccessControlQueueActualEnv(BaseActualEnv):
+class AccessControlQueueActualEnv(ActualEnv):
     """External environment class that actually simulates the access-control queuing task.
     """
 
@@ -32,7 +32,7 @@ class AccessControlQueueActualEnv(BaseActualEnv):
             priorities (list of float): Priorities that a customer can has.
         """
         env_proxy = kwargs['env_proxy']
-        BaseActualEnv.__init__(self, env_proxy)
+        ActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
         self._num_steps = kwargs['num_steps']
         self._server_states = ['free'] * kwargs['num_servers']
@@ -112,11 +112,11 @@ class AccessControlQueueActualEnv(BaseActualEnv):
         except TerminateGymProxy:
             # Means termination signal triggered by the agent.
             logger.info('Terminating AccessControlQueue environment.')
-            BaseActualEnv.env_proxy.terminate_sync()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
         except Exception as e:
             logger.exception(e)
-            BaseActualEnv.env_proxy.terminate_sync()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
 
     def finish(self, kwargs: Optional[dict] = None):
