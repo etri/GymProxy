@@ -11,7 +11,7 @@ from typing import Optional
 
 import numpy as np
 
-from gymproxy.base_actual_env import ActualEnv, TerminateGymProxy
+from gymproxy.actual_env import ActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('car_rental_actual_env')
 
@@ -35,7 +35,7 @@ class CarRentalActualEnv(ActualEnv):
             return_rate_1 (int): Mean arrival rate of return at the location 1 for each time-steps.
         """
         env_proxy = kwargs.get('env_proxy')
-        BaseActualEnv.__init__(self, env_proxy)
+        ActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
         self._num_steps = kwargs['num_steps']
         self._max_num_cars_per_loc = kwargs['max_num_cars_per_loc']
