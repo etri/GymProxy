@@ -150,11 +150,6 @@ class EnvProxy(ABC):
         self._action = action
 
     def terminate_sync(self):
-        """Releases _lock. Utility method required for closing safely the actual environment.
-        """
-        self._lock.release()
-
-    def set_gym_env_event(self):
         """Sets _gym_env_event. Utility method required for closing safely the actual environment.
         """
         self._gym_env_event.set()
