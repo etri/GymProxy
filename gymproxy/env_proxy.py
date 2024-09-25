@@ -23,7 +23,7 @@ class EnvProxy(ABC):
     """Environment proxy that plays a role of interface between a gym-type and external actual environment.
     """
 
-    def __init__(self, init_actual_env: callable, actual_env_class, kwargs: Optional[dict] = None):
+    def __init__(self, actual_env_class, kwargs: Optional[dict] = None):
         """Constructor.
 
         Args:
@@ -56,6 +56,10 @@ class EnvProxy(ABC):
 
     def reset_actual_env(self, seed:int, options: Optional[dict] = None):
         """Resets the actual environment.
+
+        Args:
+            seed: TBD. 
+            options: Dictionary of optional arguments.
         """
         #print("reset_acutal_env")
         def reset_actual_env_(seed:int, options: Optional[dict] = None):
@@ -87,8 +91,8 @@ class EnvProxy(ABC):
     def close_actual_env(self):
         """Closes the actual environment.
         """
-        #print("close_actual_env")
-        self._close_actual_env(actual_env=self._actual_env)     # Actually closes the actual environment.
+        
+        self._actual_env.finish(kwargs)    # Actually closes the actual environment.
 
         # Drive the thread for actual environment finished.
         if self._future and self._future.running():
@@ -172,10 +176,9 @@ class EnvProxy(ABC):
         #print("set_action")
         self._action = action
 
-    def release_lock(self):
+    def terminate_sync(self):
         """Releases _lock. Utility method required for closing safely the actual environment.
         """
-        #print("release_lock called")
         self._lock.release()
 
     def set_gym_env_event(self):
