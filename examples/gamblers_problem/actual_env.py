@@ -11,7 +11,7 @@ from typing import Optional
 
 import numpy as np
 
-from gymproxy.base_actual_env import BaseActualEnv, TerminateGymProxy
+from gymproxy.actual_env import ActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('gamblers_problem_actual_env')
 
@@ -20,7 +20,7 @@ logger = logging.getLogger('gamblers_problem_actual_env')
 # INITIAL_CAPITAL = 30
 # WINNING_CAPITAL = 100
 
-class GamblersProblemActualEnv(BaseActualEnv):
+class GamblersProblemActualEnv(ActualEnv):
     """External environment class that actually simulates gambler's problem.
     """
 
@@ -35,7 +35,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
             winning_capital (float): Capital for winning the game.
         """
         env_proxy = kwargs.get('env_proxy')
-        BaseActualEnv.__init__(self, env_proxy)
+        ActualEnv.__init__(self, env_proxy)
         config = kwargs.get('config')
         # self._num_steps = config['num_steps']
         self._num_steps = kwargs['num_steps']
@@ -103,9 +103,7 @@ class GamblersProblemActualEnv(BaseActualEnv):
                 # Amount of betting should be less than difference between the winning and current capitals.
 
                 if action is None:
-
-                    BaseActualEnv.env_proxy.release_lock()
-                    BaseActualEnv.env_proxy.set_gym_env_event()
+                    ActualEnv.env_proxy.terminate_sync()
                     exit(1)
                 else:
                     tmp = action
@@ -163,15 +161,12 @@ class GamblersProblemActualEnv(BaseActualEnv):
         except TerminateGymProxy:
             # Means termination signal triggered by the agent.
             logger.info('Terminating gamblers_problem environment.')
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
-
         except Exception as e:
             print("Exception e")
             logger.exception(e)
-            BaseActualEnv.env_proxy.release_lock()
-            BaseActualEnv.env_proxy.set_gym_env_event()
+            ActualEnv.env_proxy.terminate_sync()
             exit(1)
 
     def finish(self, kwargs: Optional[dict] = None):
