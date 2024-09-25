@@ -6,7 +6,7 @@
 
 from abc import *
 from concurrent.futures import ThreadPoolExecutor
-from threading import Event, Lock
+from threading import Event
 from typing import Optional
 
 
@@ -61,9 +61,9 @@ class EnvProxy(ABC):
             options: Dictionary of optional arguments.
         """
         def reset_actual_env_(seed:int, options: Optional[dict] = None):
-            """Nested function for adding synchronization mechanism to _reset_actual_env() function. This function is
-            executed in a thread provided by _pool. This implies that the actual environment is executed in a  separate
-            thread provided by _pool.
+            """Nested function for adding synchronization mechanism to _reset_actual_env() function. 
+            This function is executed in a thread provided by _pool. 
+            This implies that the actual environment is executed in a separate thread provided by _pool.
             """
             self._actual_env_event.wait()   # Waits for calling get_obs() method from the gym-type environment.
             self._actual_env.run(seed, options)    # Actually resets the actual environment.
