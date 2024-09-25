@@ -11,11 +11,11 @@ import numpy as np
 from gymnasium.spaces import Box, Discrete, Tuple
 
 from examples.car_rental.actual_env import CarRentalActualEnv
-from gymproxy import BaseEnv
+from gymproxy import GymEnv
 
 logger = logging.getLogger('car_rental')
 
-class CarRental(BaseEnv):
+class CarRental(GymEnv):
     """Class defining observation and action spaces of gym-type CarRental environment.
     """
     def __init__(self, config: Optional[dict] = None):
@@ -43,7 +43,7 @@ class CarRental(BaseEnv):
                       'return_rate_0': RETURN_RATE_0,
                       'return_rate_1': RETURN_RATE_1}
 
-        BaseEnv.actual_env_class = CarRentalActualEnv
+        GymEnv.actual_env_class = CarRentalActualEnv
         super().__init__(config)
 
     @staticmethod
