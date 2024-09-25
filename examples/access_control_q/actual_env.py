@@ -12,7 +12,7 @@ from typing import Optional
 
 import numpy as np
 
-from gymproxy.base_actual_env import ActualEnv, TerminateGymProxy
+from gymproxy.actual_env import ActualEnv, TerminateGymProxy
 
 logger = logging.getLogger('access_control_q_actual_env')
 
