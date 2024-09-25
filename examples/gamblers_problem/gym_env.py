@@ -12,11 +12,11 @@ import numpy as np
 from gymnasium.spaces import Box
 
 from examples.gamblers_problem.actual_env import GamblersProblemActualEnv
-from gymproxy import BaseEnv
+from gymproxy import GymEnv
 
 logger = logging.getLogger('gamblers_problem')
 
-class GamblersProblem(BaseEnv):
+class GamblersProblem(GymEnv):
     """Class defining observation and action spaces of gym-type GamblersProblem environment.
     """
     def __init__(self, config: Optional[dict] = None):
@@ -40,7 +40,7 @@ class GamblersProblem(BaseEnv):
                       'initial_capital': INITIAL_CAPITAL,
                       'winning_capital': WINNING_CAPITAL}
 
-        BaseEnv.actual_env_class = GamblersProblemActualEnv
+        GymEnv.actual_env_class = GamblersProblemActualEnv
         super().__init__(config)
 
     @staticmethod
