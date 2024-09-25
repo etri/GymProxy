@@ -17,105 +17,89 @@ log_level = logging.INFO
 logging.basicConfig(format=FORMAT, datefmt=DATE_FMT, level=log_level)
 logger = logging.getLogger('gamblers_problem_simulator')
 
-
-class AccessControlSimulator:
-    """External environment class that actually simulates gambler's problem.
-    """
-
-    def __init__(self, num_steps, num_servers, server_free_prob, priorities):
-        """Constructor.
-
-        :param kwargs: Dictionary of keyword arguments. It should have 'config' argument that is a dictionary for
-        setting configuration parameters. kwargs['config'] should define following keys:
-            num_steps (int): Number of time-steps.
-            prob_head (float): Probability that a coin flip becomes head.
-            initial_capital (float): Initial capital.
-            winning_capital (float): Capital for winning the game.
-        """
-        self._num_steps = num_steps
-        self._server_states = ['free'] * num_servers
-        self._server_free_probability = server_free_prob
-        self._priorities = priorities
-        self._reward = 0.
-        self._t = 0
-        self._accumulated_reward = 0
-
-    def start(self, seed_:int):
-        """Runs the access-control queuing task environment.
-        """
-        np.random.seed(seed_)
-        while self._t < self._num_steps:
-
-            # Assumes that a new customer arrives. Chooses new customer's priority from the list of candidate
-            # priorities.
-            priority = self._priorities[np.random.randint(0, len(self._priorities))]
-
-            # Identifies free servers.
-            free_servers = list(filter(lambda i_:
-                                       self._server_states[i_] == 'free', range(0, len(self._server_states))))
-
-            # Observation consists of customer's priority and number of free servers.
-            obs = np.array([priority, len(free_servers)], dtype=np.int32)
-
-            terminated = False
-            truncated = False
-            info = {}
-
-            # Action can be 0 or 1: 0 means rejection of customer. 1 means acceptance of customer.
-            # action = AccessControlQueueActualEnv.get_action(obs, self._reward, terminated, truncated, info)
-            action = np.random.choice([False,True])
-
-            if len(free_servers) > 0:
-                if action:  # Means acceptance.
-
-                    # Randomly chooses a server for the customer among free ones.
-                    i = free_servers[np.random.randint(0, len(free_servers))]
-                    self._server_states[i] = 'busy'     # Selected server becomes busy.
-
-                    self._reward = priority     # Reward is the priority of accepted customer.
-                else:   # Means rejection.
-                    self._reward = 0.
-            else:   # Rejects the customer if the number of free servers is 0.
-                self._reward = 0.
-            busy_servers = list(filter(lambda i_:
-                                       self._server_states[i_] == 'busy', range(0, len(self._server_states))))
-
-            # Busy servers become free with _server_free_probability.
-            for i in busy_servers:
-                if np.random.rand() < self._server_free_probability:
-                    self._server_states[i] = 'free'
-
-            self._t += 1
-            self._accumulated_reward += self._reward
-
-            # Arrives to the end of the episode (terminal state).
-            free_servers = list(filter(lambda i_:
-                                       self._server_states[i_] == 'free', range(0, len(self._server_states))))
-            obs = np.array([0, len(free_servers)], dtype=np.int32)
-            terminated = True
-            truncated = True
-            info = {}
-            step_str = '{}-th step / '.format(self._t)
-            obs_str = 'obs: {} / '.format(obs)
-            reward_str = 'reward: {} '.format(self._reward)
-            info_str = 'info: {} / '.format(info)
-            action_str = 'action: {} '.format(action)
-            result_str = step_str + obs_str + reward_str + info_str + action_str
-            logger.info(result_str)
-
-        logger.info(self._accumulated_reward)
-
-
 NUM_STEPS = 100
 NUM_SERVERS = 10
 SERVER_FREE_PROB = 0.06
 PRIORITIES = [1., 2., 4., 8.]
 SEED = 126
 
+def get_new_customer(priorities) -> float:
+    return priorities[np.random.randint(0, len(priorities))]
+    
+def get_free_servers(server_states) -> list[int]:
+    return list(filter(lambda i: server_states[i] == 'free', range(0, len(server_states))))
+    
+def get_busy_servers(server_states) -> list[int]):
+    return list(filter(lambda i: server_states[i] == 'busy', range(0, len(server_states))))
+    
+def make_obs(priority, free_servers) -> np.ndarray:
+    return np.array([priority, len(free_servers)], dtype=np.int32)
+    
+def choose_free_server(free_servers) -> int:
+    return free_servers[np.random.randint(0, len(free_servers))]
+    
+def policy(obs, reward) -> int:
+    return np.random.choice([False,True])
 
 def main():
-    simulator = AccessControlSimulator(NUM_STEPS, NUM_SERVERS, SERVER_FREE_PROB, PRIORITIES)
-    simulator.start(SEED)
+    num_steps = NUM_STEPS
+    server_states = ['free'] * NUM_SERVERS
+    server_free_probability = SERVER_FREE_PROB
+    priorities = PRIORITIES
+    reward = 0.
+    t = 0
+    accumulated_reward = 0
+    np.random.seed(SEED)
+    
+    while t < num_steps:
+        # Assumes that a new customer arrives. Chooses new customer's priority from the list of candidate priorities.
+        priority = get_new_customer(priorities)
+
+        free_servers = get_free_servers(server_states)    # Identifies free servers.
+        obs = make_obs(priority, free_servers)    # Observation consists of customer's priority and number of free servers.
+        terminated = False
+        truncated = False
+        info = {}
+        action = policy(obs, reward)    # Action can be 0 or 1: 0 means rejection of customer. 1 means acceptance of customer.
+
+        if len(free_servers) > 0:
+            if action:  # Means acceptance.
+
+                # Randomly chooses a server for the customer among free ones.
+                i = choose_free_server(free_servers)
+                server_states[i] = 'busy'     # Selected server becomes busy.
+
+                reward = priority     # Reward is the priority of accepted customer.
+            else:   # Means rejection.
+                reward = 0.
+        else:   # Rejects the customer if the number of free servers is 0.
+            reward = 0.
+        busy_servers = get_busy_servers(server_states)
+
+        # Busy servers become free with _server_free_probability.
+        for i in busy_servers:
+            if np.random.rand() < server_free_probability:
+                erver_states[i] = 'free'
+
+        t += 1
+        accumulated_reward += reward
+
+        # Arrives to the end of the episode (terminal state).
+        free_servers = get_free_servers(server_states)
+        obs = make_obs(0, free_servers)
+        terminated = True
+        truncated = True
+        info = {}
+        step_str = '{}-th step / '.format(t)
+        obs_str = 'obs: {} / '.format(obs)
+        reward_str = 'reward: {} '.format(reward)
+        info_str = 'info: {} / '.format(info)
+        action_str = 'action: {} '.format(action)
+        result_str = step_str + obs_str + reward_str + info_str + action_str
+        logger.info(result_str)
+
+    logger.info(accumulated_reward)
+
 
 if __name__ == "__main__":
     main()
