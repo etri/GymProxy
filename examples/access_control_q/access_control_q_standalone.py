@@ -1,8 +1,7 @@
-# Author: Sae Hyong Park <labry@etri.re.kr>
-# Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
+# Author: Sae Hyong Park <labry@etri.re.kr>, Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """External environment for actually simulating gambler's problem example. It is implemented based on the following reference:
-R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 10.2: access-control queueing task).
+R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 10.2: An Access-Control Queuing Task).
 """
 
 import logging
