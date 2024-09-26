@@ -53,9 +53,10 @@ class AccessControlQueueActualEnv(ActualEnv):
             terminated = False
             truncated = False
             info = {}
-            np.random.seed(seed_)
             self._reward = 0.
             self._t = 0
+            np.random.seed(seed_)
+            
             while self._t < self._num_steps:
                 # Assumes that a new customer arrives. Chooses new customer's priority from the list of candidate priorities.
                 priority = get_new_customer(self._priorities)
@@ -78,10 +79,10 @@ class AccessControlQueueActualEnv(ActualEnv):
                         self._reward = 0.
                 else:   # Rejects the customer if the number of free servers is 0.
                     self._reward = 0.
+                    
                 busy_servers = get_busy_servers(self._server_states)
                 
-                # Busy servers become free with _server_free_probability.
-                for i in busy_servers:
+                for i in busy_servers:    # Busy servers become free with _server_free_probability.
                     if random.random() < self._server_free_probability:
                         self._server_states[i] = 'free'
 
@@ -92,13 +93,10 @@ class AccessControlQueueActualEnv(ActualEnv):
             obs = make_obs(0, free_servers)
             terminated = True
             truncated = True
-            #info = {}
             AccessControlQueueActualEnv.set_obs_and_reward(obs, self._reward, terminated, truncated, info)
-            # logger.info("self._cnt: {}".format(self._cnt))
-            # print("self._cnt: {}".format(self._cnt))
+            
         # Exception handling block.
-        except TerminateGymProxy:
-            # Means termination signal triggered by the agent.
+        except TerminateGymProxy:    # Means termination signal triggered by the agent.
             logger.info('Terminating AccessControlQueue environment.')
             ActualEnv.env_proxy.terminate_sync()
             exit(1)
@@ -110,7 +108,7 @@ class AccessControlQueueActualEnv(ActualEnv):
     def finish(self, kwargs: Optional[dict] = None):
         """Finishes access-control queuing task environment.
 
-        :param kwargs: Dictionary of keyword arguments.
+        Args:
+            kwargs: Dictionary of keyword arguments.
         """
-        logger.info("finish")
         return
