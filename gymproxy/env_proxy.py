@@ -1,5 +1,4 @@
-# Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
-#         Sae Hyong Park <labry@etri.re.kr>
+# Author: Sae Hyong Park <labry@etri.re.kr>, Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Module including EnvProxy class.
 """
@@ -8,7 +7,6 @@ from abc import *
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from typing import Optional
-
 
 def singleton(class_):
     instances = {}
@@ -71,7 +69,7 @@ class EnvProxy(ABC):
         # Begins the thread for executing the actual environment.
         self._future = self._pool.submit(reset_actual_env_, seed, options)
 
-    def close_actual_env(self):
+    def close_actual_env(self, kwargs: Optional[dict] = None):
         """Closes the actual environment.
         """
         self._actual_env.finish(kwargs)    # Actually closes the actual environment.
