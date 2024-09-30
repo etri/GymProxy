@@ -1,5 +1,4 @@
-# Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
-#         Sae Hyong Park <labry@etri.re.kr>
+# Author: Sae Hyong Park <labry@etri.re.kr>, Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Package including base classes of GymProxy.
 """
