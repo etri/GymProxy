@@ -1,5 +1,4 @@
-# Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
-#         Sae Hyong Park <labry@etri.re.kr>
+# Author: Sae Hyong Park <labry@etri.re.kr>, Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Module including TerminateGymProxy and ActualEnv classes.
 """
@@ -22,7 +21,7 @@ class ActualEnv(ABC):
     env_proxy = None    # Class variable for holding the reference of the environment proxy object.
 
     def __init__(self, env_proxy: EnvProxy):
-         """Constructor.
+        """Constructor.
 
         Args:
             env_proxy: Environment proxy object.
@@ -30,11 +29,12 @@ class ActualEnv(ABC):
         ActualEnv.env_proxy = env_proxy
 
     @abstractmethod
-    def run(self, seed:int, kwargs: Optional[dict] = None):
+    def run(self, seed: int, kwargs: Optional[dict] = None):
         """Should define the main control loop of the actual environment here.
 
         Args:
             kwargs: Dictionary of keyword arguments for beginning the actual environment.
+            seed: TBD
         """
         raise NotImplementedError
 
@@ -48,33 +48,35 @@ class ActualEnv(ABC):
         raise NotImplementedError
 
     @staticmethod
-    def get_action(obs: object, reward: float, done: bool, truncated:bool, info: dict) -> any:
+    def get_action(obs: object, reward: float, terminated: bool, truncated:bool, info: dict) -> any:
         """Gets action from the environment proxy. This method should be called in the scope of the actual environment.
 
         Args:
             obs: Observation to be given to the agent.
             reward: Reward to be given to the agent.
-            done: Indicates whether the actual environment is finished or not.
+            terminated: Indicates whether the episode finishes or not.
+            truncated: Indicates whether the episode is truncated or not.
             info: Information that is additionally to be given to the agent.
-        Returns: 
+
+        Returns:
             action: Action from the agent.
         """
-        #print("base_actual_env get_action() called")
-        action, closing = ActualEnv.env_proxy.get_action(obs, reward, done, truncated, info)
+        action, closing = ActualEnv.env_proxy.get_action(obs, reward, terminated, truncated, info)
         
         if closing:
             raise TerminateGymProxy()
         return action
 
     @staticmethod
-    def set_obs_and_reward(obs: object, reward: float, done: bool, truncated:bool, info: dict):
+    def set_obs_and_reward(obs: object, reward: float, terminated: bool, truncated:bool, info: dict):
         """Sends observation, reward, done, and information to the agent, but do not receive action. 
         This method should be called in the scope of environment when the begin or end of an episode.
 
         Args:
             obs: Observation to be given to the agent.
             reward: Reward to be given to the agent.
-            done: Indicates whether the actual environment is finished or not.
+            terminated: Indicates whether the episode finishes or not.
+            truncated: Indicates whether the episode is truncated or not.
             info: Information that is additionally to be given to the agent.
         """
-        ActualEnv.env_proxy.set_obs_and_reward(obs, reward, done, truncated, info)
+        ActualEnv.env_proxy.set_obs_and_reward(obs, reward, terminated, truncated, info)
