@@ -6,7 +6,8 @@ R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed.,
 
 import logging
 import numpy as np
-import random
+
+from examples.utilities import get_step_log_str_for_standalone
 
 # Setting logger
 FORMAT = "[%(asctime)s|%(levelname)s|%(name)s] %(message)s"
@@ -17,7 +18,7 @@ logger = logging.getLogger('access_control_q')
 
 NUM_STEPS = 100
 NUM_SERVERS = 10
-SERVER_FREE_PROBILITY = 0.06
+SERVER_FREE_PROBABILITY = 0.06
 PRIORITIES = [1., 2., 4., 8.]
 SEED = 2024
 
@@ -27,7 +28,7 @@ def get_new_customer(priorities) -> float:
 def get_free_servers(server_states) -> list[int]:
     return list(filter(lambda i: server_states[i] == 'free', range(0, len(server_states))))
     
-def get_busy_servers(server_states) -> list[int]):
+def get_busy_servers(server_states) -> list[int]:
     return list(filter(lambda i: server_states[i] == 'busy', range(0, len(server_states))))
     
 def make_obs(priority, free_servers) -> np.ndarray:
@@ -42,20 +43,19 @@ def policy(obs, reward) -> int:
 def main():
     server_states = ['free'] * NUM_SERVERS
     reward = 0.
+    action = None
     t = 0
-    accumulated_reward = 0
     np.random.seed(SEED)
     
     while t < NUM_STEPS:
-        # Assumes that a new customer arrives. Chooses new customer's priority from the list of candidate priorities.
-        priority = get_new_customer(PRIORITIES)
+        priority = get_new_customer(PRIORITIES) # Assumes that a new customer arrives.
+        # Chooses new customer's priority from the list of candidate priorities.
 
         free_servers = get_free_servers(server_states)    # Identifies free servers.
         obs = make_obs(priority, free_servers)    # Observation consists of customer's priority and number of free servers.
-        terminated = False
-        truncated = False
-        info = {}
         action = policy(obs, reward)    # Action can be 0 or 1: 0 means rejection of customer. 1 means acceptance of customer.
+        log_step_str = get_step_log_str_for_standalone(t, obs, reward, action)
+        logger.info(log_step_str)
 
         if len(free_servers) > 0:
             if action:  # Means acceptance.
@@ -69,28 +69,17 @@ def main():
             
         busy_servers = get_busy_servers(server_states)
         
-        for i in busy_servers:    # Busy servers become free with SERVER_FREE_PROBILITY
-            if np.random.rand() < SERVER_FREE_PROBILITY:
+        for i in busy_servers:    # Busy servers become free with SERVER_FREE_PROBABILITY
+            if np.random.rand() < SERVER_FREE_PROBABILITY:
                 server_states[i] = 'free'
 
         t += 1
-        accumulated_reward += reward
 
-        # Arrives to the end of the episode (terminal state).
-        free_servers = get_free_servers(server_states)
-        obs = make_obs(0, free_servers)
-        terminated = True
-        truncated = True
-        info = {}
-        step_str = '{}-th step / '.format(t)
-        obs_str = 'obs: {} / '.format(obs)
-        reward_str = 'reward: {} '.format(reward)
-        info_str = 'info: {} / '.format(info)
-        action_str = 'action: {} '.format(action)
-        result_str = step_str + obs_str + reward_str + info_str + action_str
-        logger.info(result_str)
-
-    logger.info(accumulated_reward)
+    # Arrives to the end of the episode (terminal state).
+    free_servers = get_free_servers(server_states)
+    obs = make_obs(0, free_servers)
+    log_step_str = get_step_log_str_for_standalone(t, obs, reward, action)
+    logger.info(log_step_str)
 
 
 if __name__ == "__main__":
