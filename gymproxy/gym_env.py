@@ -1,5 +1,4 @@
-# Author: Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
-#         Sae Hyong Park <labry@etri.re.kr>
+# Author: Sae Hyong Park <labry@etri.re.kr>, Seungjae Shin <sjshin0505@{etri.re.kr, gmail.com}>
 
 """Module including GymEnv class.
 """
@@ -7,8 +6,7 @@
 import gymnasium as gym
 
 from abc import *
-from typing import TypeVar, Optional
-from gymproxy.actual_env import ActualEnv
+from typing import TypeVar, Optional, Any, SupportsFloat
 from gymproxy.env_proxy import EnvProxy
 
 ObsType = TypeVar("ObsType")
