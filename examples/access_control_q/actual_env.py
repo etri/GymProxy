@@ -4,13 +4,9 @@
 R. S. Sutton and A. G. Barto, Reinforcement Learning - An Introduction, 2nd ed., 2018 (Example 10.2: An Access-Control Queuing Task).
 """
 
-import logging
-import numpy as np
-import random
-import examples.access_control_q
-
 from typing import Optional
 from gymproxy.actual_env import ActualEnv, TerminateGymProxy
+from examples.access_control_q.standalone import *
 
 logger = logging.getLogger('access_control_q_actual_env')
 
@@ -25,10 +21,10 @@ class AccessControlQueueActualEnv(ActualEnv):
             kwargs: Dictionary of keyword arguments. 
             It should have 'config' argument that is a dictionary for setting configuration parameters. 
             kwargs['config'] should define following keys:
-                num_steps (int): Number of time-steps.
-                num_servers (int): Number of servers.
-                server_free_probability (float): Probability that a server completes its task.
-                priorities (list of float): Priorities that a customer can has.
+                - num_steps (int): Number of time-steps.
+                - num_servers (int): Number of servers.
+                - server_free_probability (float): Probability that a server completes its task.
+                - priorities (list of float): Priorities that a customer can has.
         """
         env_proxy = kwargs['env_proxy']
         ActualEnv.__init__(self, env_proxy)
@@ -40,16 +36,14 @@ class AccessControlQueueActualEnv(ActualEnv):
         self._reward = 0.
         self._t = 0
 
-    def run(self, seed_:int, kwargs: Optional[dict] = None):
+    def run(self, seed_: int, kwargs: Optional[dict] = None):
         """Runs the access-control queuing task environment.
 
         Args:
+            seed_: TBD
             kwargs: Dictionary of keyword arguments.
         """
         try:
-            obs = None
-            terminated = False
-            truncated = False
             info = {}
             self._reward = 0.
             self._t = 0
@@ -81,7 +75,7 @@ class AccessControlQueueActualEnv(ActualEnv):
                 busy_servers = get_busy_servers(self._server_states)
                 
                 for i in busy_servers:    # Busy servers become free with _server_free_probability.
-                    if random.random() < self._server_free_probability:
+                    if np.random.random() < self._server_free_probability:
                         self._server_states[i] = 'free'
 
                 self._t += 1
