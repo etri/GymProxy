@@ -48,7 +48,7 @@ class AccessControlSimulator:
 
         if len(free_servers) > 0:
             if action:  # Acceptance
-                i = free_servers[np.random.randint(0, len(free_servers))]
+                i = free_servers[random.randrange(0, free_servers)]    # i = free_servers[np.random.randint(0, len(free_servers))]
                 self._server_states[i] = 'busy'
                 self._reward = priority * 0.005
             else:  # Rejection
