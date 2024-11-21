@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import argparse
-import time
-
 import numpy as np
+import random
+import time
 from ray.rllib.env.policy_client import PolicyClient
 import logging
 
