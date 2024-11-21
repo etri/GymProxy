@@ -2,8 +2,8 @@
 
 import argparse
 import logging
-
 import numpy as np
+import random
 from ray.rllib.env.policy_client import PolicyClient
 
 # Setting logger
