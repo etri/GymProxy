@@ -1,16 +1,16 @@
 # GymProxy
 
-GymProxy is a tiny library for porting an external python-based simulation on OpenAI Gym environment. 
+GymProxy is a tiny library for porting an external python-based simulation on Gymnasium (Gym) environment. 
 
 It is designed for users who want to apply reinforcement learning (RL) in an existing python-based simulation. 
 
-GymProxy makes a target simulation environment inter-operate with OpenAI Gym through multi-threading.   
+GymProxy makes a target simulation environment inter-operate with Gym through multi-threading.   
 
 ## Installation
 
 As pre-requisite, you should have Python 3.7+ installed on your machine. 
 
-[NumPy](https://numpy.org) and [OpenAI Gym](https://gym.openai.com/) libraries are also required.    
+[NumPy](https://numpy.org) and [Gym]([https://gymnasium.farama.org/) libraries are also required.    
 
 Clone this repository on your machine and run:    
 
