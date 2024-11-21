@@ -72,7 +72,7 @@ class AccessControlSimulator:
                 if action:  # Means acceptance.
 
                     # Randomly chooses a server for the customer among free ones.
-                    i = free_servers[np.random.randint(0, len(free_servers))]
+                    i = free_servers[random.randrange(0, free_servers)]    # i = free_servers[np.random.randint(0, len(free_servers))]
                     self._server_states[i] = 'busy'     # Selected server becomes busy.
 
                     self._reward = priority     # Reward is the priority of accepted customer.
