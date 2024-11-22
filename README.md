@@ -29,13 +29,10 @@ We present three gym-type environments as usage examples of GymProxy:
 - GamblersProblem
 - AccessControlQueue
 
-Each of the above environments simulates example 4.2 (Jack's car rental), 4.3 (gambler's problem), and 10.2 
-(access-control queuing task), respectively, described in this book:   
+Each of the above environments simulates example 4.2 (Jack's car rental), 4.3 (gambler's problem), and 10.2 (access-control queuing task), respectively, described in this book:   
 
 R. S. Sutton and A. G. Barto, *Reinforcement Learning: An Introduction*, 2nd ed., MIT Press, 2018. 
 
 ## Acknowledgement
 
-This work was supported by the Institute of Information and Communications Technology Planning and Evaluation (IITP)
-and funded by the Korea government (MSIT) under Grant No. 2017-0-00045, Hyper-Connected Intelligent Infrastructure
-Technology Development. 
+This work was supported by Institute of Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (RS-2024-00392332, Development of 6G Network Integrated Intelligence Plane Technologies & 2017-0-00045, Hyper-Connected Intelligent Infrastructure Technology Development).
