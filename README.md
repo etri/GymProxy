@@ -35,4 +35,4 @@ R. S. Sutton and A. G. Barto, *Reinforcement Learning: An Introduction*, 2nd ed.
 
 ## Acknowledgement
 
-This work was supported by Institute of Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (RS-2024-00392332, Development of 6G Network Integrated Intelligence Plane Technologies & 2017-0-00045, Hyper-Connected Intelligent Infrastructure Technology Development).
+This work was supported in part by Institute of Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (RS-2024-00392332, Development of 6G Network Integrated Intelligence Plane Technologies & 2017-0-00045, Hyper-Connected Intelligent Infrastructure Technology Development), and part by Electronics and Telecommunications Research Institutue (ETRI) grant funded by the Korea government (No. 24ZR1100, A Study of Hyper-Connected Thinking Internet Technology by Autonomous Connecting, Controlling and Evolving Ways).
