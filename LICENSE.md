@@ -22,6 +22,9 @@ If you have acquired all or a part of the GymProxy Project in any way and it is 
 
 ### Technical Support and Other Inquiries 
 If you have any questions about licensing and sales of GymProxy Project, and other technical support services, please contact the following:
-* Name: Seungjae Shin
-* E-mail: sjshin0505@{etri.re.kr, gmail.com} 
-* Phone: +82-42-860-6362
+* Seungjae Shin
+    * E-mail: sjshin0505@{etri.re.kr, gmail.com} 
+    * Phone: +82-42-860-6362
+* Sae Hyong Park
+    * E-mail: labry@etri.re.kr
+    * Phone: +82-42-860-1268
