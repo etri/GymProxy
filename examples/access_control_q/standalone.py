@@ -25,10 +25,10 @@ SEED = 2024
 def get_new_customer(priorities) -> float:
     return priorities[np.random.randint(0, len(priorities))]
     
-def get_free_servers(server_states) -> List[int]:
+def get_free_servers(server_states) -> list[int]:
     return list(filter(lambda i: server_states[i] == 'free', range(0, len(server_states))))
     
-def get_busy_servers(server_states) -> List[int]:
+def get_busy_servers(server_states) -> list[int]:
     return list(filter(lambda i: server_states[i] == 'busy', range(0, len(server_states))))
     
 def make_obs(priority, free_servers) -> np.ndarray:

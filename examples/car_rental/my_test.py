@@ -48,6 +48,6 @@ tune.run("PPO",
                  },
          # keep_checkpoints_num=100,
          checkpoint_freq=20,
-         storage_path="C:/ray_results",
+         storage_path="/tmp/ray_results",
          trial_dirname_creator=trial_name_creator,
          )

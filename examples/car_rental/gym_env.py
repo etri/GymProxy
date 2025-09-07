@@ -55,7 +55,7 @@ class CarRental(GymEnv):
         """
         config = kwargs
         max_num_cars_per_loc = config.get('max_num_cars_per_loc', 20)
-        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int_)
+        return Box(low=0, high=max_num_cars_per_loc, shape=(2,), dtype=np.int32)
 
     @staticmethod
     def build_action_space(kwargs: Optional[dict] = None) -> gymnasium.Space:
@@ -67,4 +67,4 @@ class CarRental(GymEnv):
         config = kwargs
         # max_num_cars_per_loc = config.get('max_num_cars_per_loc')
         max_num_cars_for_move = 5
-        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_for_move, shape=(1,), dtype=np.int_)))
+        return Tuple((Discrete(2), Box(low=0.0, high=float(max_num_cars_for_move), shape=(1,), dtype=np.float32)))

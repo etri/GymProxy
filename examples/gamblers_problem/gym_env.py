@@ -52,8 +52,8 @@ class GamblersProblem(GymEnv):
         """
         config = kwargs
         # print("winning:", config['winning_capital'])
-        s_win = config.get('winning_capital', 100)
-        result = Box(low=0, high=100, shape=(1,), dtype=np.int_)
+        s_win = config.get('winning_capital', 100.0)
+        result = Box(low=0., high=100.0, shape=(1,), dtype=np.float32)
         #print(result)
         return result
 
@@ -66,13 +66,13 @@ class GamblersProblem(GymEnv):
         """
         config = kwargs
         s_win = config.get('winning_capital', 100)
-        # result = Box(low=1., high=s_win, shape=(1,), dtype=np.int_)
-        result = Box(low=0., high=1.0, shape=(1,), dtype=np.float_)
+        # result = Box(low=1., high=s_win, shape=(1,), dtype=np.int64)
+        result = Box(low=0., high=1.0, shape=(1,), dtype=np.float32)
         #print(result)
         return result
 
     @staticmethod
-    def update_action_space(self, obs: int):
+    def update_action_space(self, obs: float):
         """Builds action space.
 
         :param kwargs: Dictionary of keyword arguments for building action space.
@@ -85,7 +85,7 @@ class GamblersProblem(GymEnv):
 
     def sample_action(self, cash_in_hand):
         cash_in_hand = max(cash_in_hand, 2)
-        my_action = np.random.randint(1, cash_in_hand)
+        my_action = float(np.random.randint(1, cash_in_hand))
         # logger.info("my_action: {}".format(my_action))
         return my_action
 

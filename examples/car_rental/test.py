@@ -54,7 +54,7 @@ def main():
         logger.info(str(obs)+ str(info))
 
         while True:
-            env.render()
+            # env.render()
             # env.action_space.seed(1) # to reproduce errors to debug
             action = env.action_space.sample()  # Means random agent.
             # ready = Tuple((Discrete(2), Box(low=0, high=MAX_NUM_CARS_PER_LOC, shape=(1,), dtype=np.int_)))

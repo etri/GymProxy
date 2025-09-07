@@ -85,7 +85,7 @@ class GamblersProblemActualEnv(ActualEnv):
             np.random.seed(seed_)  # added seed
             while self._t < self._num_steps and not terminated:
 
-                obs = np.array([self._s], dtype=np.int_)     # Observation is current capital.
+                obs = np.array([self._s], dtype=np.float32)     # Observation is current capital.
                 # obs = obs.flatten()
                 # if obs[0] < 0 or obs[0] > 100:
                 #     logger.info("obs in run: ", obs)
@@ -151,7 +151,7 @@ class GamblersProblemActualEnv(ActualEnv):
             # Arrives to the end of the episode (terminal state).
             if self._t >= self._num_steps and self._reward == 0:
                 self._reward = -1.
-            obs = np.array([self._s], dtype=np.int_)
+            obs = np.array([self._s], dtype=np.float32)
             # obs = obs.flatten()
             terminated = True
             truncated = True

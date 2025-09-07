@@ -26,8 +26,8 @@ config = {'num_steps': NUM_STEPS,
           'winning_capital': WINNING_CAPITAL}
 
 options = [
-    {"num_steps": 100, "prob_head": 0.6, "initial_capital": 10, "winning_capital": 100},
-    {"num_steps": 100, "prob_head": 0.6, "initial_capital": 10, "winning_capital": 100},
+    {"num_steps": 100, "prob_head": 0.6, "initial_capital": 10.0, "winning_capital": 100.0},
+    {"num_steps": 100, "prob_head": 0.6, "initial_capital": 10.0, "winning_capital": 100.0},
 ]
 
 def trial_name_creator(trial):
@@ -53,6 +53,6 @@ tune.run("PPO",
                  },
          # keep_checkpoints_num=100,
          checkpoint_freq=20,
-         storage_path="C:/ray_results",
+         storage_path="/tmp/ray_results",
          trial_dirname_creator=trial_name_creator,
          )
