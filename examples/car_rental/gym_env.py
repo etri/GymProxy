@@ -8,7 +8,7 @@ from typing import Optional
 
 import gymnasium
 import numpy as np
-from gymnasium.spaces import Box, Discrete, Tuple
+from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 
 from examples.car_rental.actual_env import CarRentalActualEnv
 from gymproxy import GymEnv
@@ -67,4 +67,5 @@ class CarRental(GymEnv):
         config = kwargs
         # max_num_cars_per_loc = config.get('max_num_cars_per_loc')
         max_num_cars_for_move = 5
-        return Tuple((Discrete(2), Box(low=0, high=max_num_cars_for_move, shape=(1,), dtype=np.int_)))
+        return MultiDiscrete([2, max_num_cars_for_move + 1])
+        # return Tuple((Discrete(2), Box(low=0, high=max_num_cars_for_move, shape=(1,), dtype=np.int_)))

@@ -94,7 +94,11 @@ class GamblersProblemActualEnv(ActualEnv):
                 # logger.info("current obs: {}".format(obs))
                 raw_action = GamblersProblemActualEnv.get_action(obs, self._reward, terminated, truncated, info)
                 # logger.info("current action {} and obs: {} action*obs {}".format(raw_action, obs, raw_action[0]*obs[0]))
-                raw_action = np.array(max(np.round(raw_action[0] * obs[0]), 1))
+                if raw_action is None:
+                    raw_action = np.array([0.0])
+                else:
+                    raw_action = np.array(max(np.round(raw_action[0] * obs[0]), 1))
+                # print("raw_action ", raw_action)
                 action = min(raw_action, self._s, self._s_win - self._s)
                 # logger.info("action {}".format(action))
                 info = {}

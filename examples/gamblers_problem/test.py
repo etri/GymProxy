@@ -55,7 +55,7 @@ def main():
         #logger.info(str(obs))
         pre_obs = obs[0]
         while True:
-            env.render()
+            # env.render()
 
             # Amount of betting should be less than current capital.
             action = env.action_space.sample()
