@@ -7,6 +7,7 @@ from abc import *
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from typing import Optional
+import numpy as np
 
 def singleton(class_):
     instances = {}
@@ -130,7 +131,28 @@ class EnvProxy(ABC):
             terminated: Whether the episode has ended, in which case further step() calls will return undefined results.
             info: Contains auxiliary diagnostic information (helpful for debugging, and sometimes learning).
         """
-        self._obs = obs.flatten()
+
+        if isinstance(obs, tuple):
+            # Flatten tuple observations to numpy array
+            flattened = []
+            for item in obs:
+                if isinstance(item, np.ndarray):
+                    flattened.extend(item.flatten())
+                elif isinstance(item, (int, float, np.integer, np.floating)):
+                    flattened.append(float(item))
+                else:
+                    # Handle other types by converting to float if possible
+                    try:
+                        flattened.append(float(item))
+                    except (ValueError, TypeError):
+                        flattened.append(0.0)  # fallback value
+            self._obs = np.array(flattened, dtype=np.float64)
+        elif isinstance(obs, np.ndarray):
+            self._obs = obs.flatten()
+        else:
+            # Handle single values or other types
+            self._obs = np.array([obs], dtype=np.float64).flatten()
+
         self._reward = reward
         self._terminated = terminated
         self._truncated = truncated
